@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TRY ON - Account Settings</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link rel="stylesheet" href="style.css">
+    <script>
+        // Basic Tailwind configuration (optional, for theme customization)
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+</head>
+<body id="account-page" class="bg-gray-100 flex flex-col min-h-screen font-inter">
+
+    <header id="main-header" class="bg-white shadow-md py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-800">Virtual TRY ON</h1>
+            <nav>
+                <a href="studio.html" id="nav-dashboard" class="text-gray-600 hover:text-blue-500 px-3 py-2 rounded-md text-sm font-medium">Try-On Studio</a>
+                <a href="gallery.html" id="nav-gallery" class="text-gray-600 hover:text-blue-500 px-3 py-2 rounded-md text-sm font-medium">My Gallery</a>
+                <a href="account.html" id="nav-account" class="text-blue-600 font-semibold px-3 py-2 rounded-md text-sm">Account</a>
+                <a href="#" id="nav-logout" class="text-red-600 hover:text-red-800 px-3 py-2 rounded-md text-sm font-medium">Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-content flex-grow pt-8 pb-12">
+        <div class="container mx-auto px-4 max-w-2xl">
+             <div class="bg-white p-6 rounded-lg shadow-md space-y-8">
+                 <h2 class="text-2xl font-semibold text-gray-700 border-b pb-3">Account Settings</h2>
+
+                 <section>
+                     <h3 class="text-lg font-semibold text-gray-600 mb-3">My Information</h3>
+                     <div class="space-y-2 text-sm">
+                         <p><strong>Name:</strong> <span id="account-name" class="text-gray-800">Loading...</span></p>
+                         <p><strong>Email:</strong> <span id="account-email" class="text-gray-800">Loading...</span></p>
+                     </div>
+                 </section>
+
+                 <section>
+                    <h3 class="text-lg font-semibold text-gray-600 mb-3">Account Actions</h3>
+                    <button id="delete-account-btn" class="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md text-sm transition duration-150 ease-in-out">
+                        Delete My Account
+                    </button>
+                    <p class="text-xs text-gray-500 mt-2">Note: Deleting your account is irreversible and will remove all saved data.</p>
+                    <div id="delete-account-error" class="error-message hidden mt-2"></div> </section>
+
+             </div>
+        </div>
+    </div>
+
+    <footer id="main-footer" class="bg-gray-800 text-white text-center py-4 mt-auto">
+        <p>&copy; 2025 Virtual TRY ON. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js" defer></script>
+
+</body>
+</html>

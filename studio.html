@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual TRY ON - Studio</title>
+
+    <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#A78B71',
+                        secondary: '#E5DED5',
+                        violet: { 50: '#f5f3ff', 100: '#ede9fe', 200: '#ddd6fe', 300: '#c4b5fd', 400: '#a78bfa', 500: '#8b5cf6', 600: '#7c3aed', 700: '#6d28d9', 800: '#5b21b6', 900: '#4c1d95' }
+                    },
+                    borderRadius: {
+                        'none': '0px',
+                        'sm': '4px',
+                        DEFAULT: '8px',
+                        'md': '12px',
+                        'lg': '16px',
+                        'xl': '20px',
+                        '2xl': '24px',
+                        '3xl': '32px',
+                        'full': '9999px',
+                        'button': '8px'
+                    },
+                    fontFamily: {
+                       sans: ['Inter', 'sans-serif'],
+                       inter: ['Inter', 'sans-serif'],
+                       pacifico: ['Pacifico', 'cursive']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+
+    <style>
+        body {
+            background-color: #F5F1EA;
+            color: #4B3F32;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .outfit-card {
+            transition: transform 0.3s ease;
+        }
+        .outfit-card:hover {
+            transform: translateY(-5px);
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .custom-radio {
+            position: relative;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #A78B71;
+            border-radius: 50%;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .custom-radio.checked::after {
+            content: "";
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #A78B71;
+        }
+
+         .custom-checkbox {
+            position: relative;
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #A78B71;
+            border-radius: 4px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .custom-checkbox.checked::after {
+            content: "";
+            position: absolute;
+            top: 2px;
+            left: 6px;
+            width: 6px;
+            height: 12px;
+            border: solid #A78B71;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        /* --- Modal Styles --- */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1000; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.6); /* Black w/ opacity */
+            align-items: center; /* Vertical center */
+            justify-content: center; /* Horizontal center */
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto; /* Responsive margin */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 90%; /* Responsive width */
+            max-width: 500px; /* Max width */
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+            animation-name: animatetop;
+            animation-duration: 0.4s
+        }
+        @keyframes animatetop {
+            from {top: -300px; opacity: 0}
+            to {top: 0; opacity: 1}
+        }
+        .modal-close-btn {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .modal-close-btn:hover,
+        .modal-close-btn:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        #modal-clothing-image {
+            width: 100%;
+            max-height: 400px; /* Adjust as needed */
+            object-fit: contain;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            background-color: #f0f0f0; /* Placeholder background */
+        }
+        #modal-size-recommendation {
+            font-size: 1rem;
+            text-align: center;
+            padding: 10px;
+            background-color: #E5DED5;
+            border-radius: 6px;
+            color: #4B3F32;
+            font-weight: 500;
+        }
+        /* --- End Modal Styles --- */
+
+
+        .clothing-grid {
+             display: grid;
+             grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+             gap: 1rem;
+             max-height: 300px; /* Adjusted from original for potentially more items */
+             overflow-y: auto;
+             padding-right: 8px; /* For scrollbar */
+        }
+        .clothing-grid::-webkit-scrollbar { width: 8px; }
+        .clothing-grid::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px;}
+        .clothing-grid::-webkit-scrollbar-thumb { background: #888; border-radius: 10px;}
+        .clothing-grid::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        .clothing-item {
+            cursor: pointer;
+            border: 1px solid #E5DED5;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #E5DED5;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center content */
+            padding: 8px; /* Add some padding */
+        }
+        .clothing-item:hover {
+            transform: translateY(-5px); /* Slight lift on hover */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Softer shadow */
+        }
+        .clothing-item img {
+            display: block;
+            width: 100%;
+            height: 100px; /* Fixed height for consistency */
+            object-fit: contain; /* Ensure image fits well */
+            padding: 0; /* Remove padding if image has its own */
+            background-color: white; /* White background for images */
+            border-radius: 4px; /* Rounded corners for image */
+            margin-bottom: 8px; /* Space between image and text */
+        }
+        .clothing-item p {
+            font-size: 0.75rem; /* Small text for name */
+            text-align: center;
+            padding: 0; /* Remove padding */
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: #4B3F32; /* Primary text color */
+            font-weight: 200; /* Lighter font weight */
+        }
+
+        .model-image {
+            max-width: 100%;
+            max-height: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain;
+            transform-origin: center center; /* Ensure scaling is centered */
+            position: relative;
+            z-index: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .mannequin-container-large {
+            min-height: 500px; /* Ensure a good default height */
+            max-height: 70vh; /* Max height relative to viewport */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            transition: background-color 0.3s ease;
+            background-color: white; /* Default background */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Subtle shadow */
+            width: 100%;
+            height: 100%;
+        }
+
+        .loading-spinner {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3; /* Above model image */
+            font-size: 2rem;
+            color: #A78B71; /* Primary color */
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .hidden { display: none; }
+
+        .uploaded-model-preview {
+            width: 50px; height: 50px; border-radius: 50%; object-fit: cover;
+            border: 2px solid #A78B71; /* Primary color border */
+            cursor: pointer;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .uploaded-model-preview.selected {
+             border-color: #4B3F32; /* Darker border when selected */
+             box-shadow: 0 0 0 3px rgba(167, 139, 113, 0.3); /* Primary color glow */
+        }
+        .model-select-btn.selected {
+            background-color: #A78B71; /* Primary color background */
+            color: white; /* White text */
+            border-color: #4B3F32; /* Darker border */
+            box-shadow: 0 0 0 3px rgba(167, 139, 113, 0.3); /* Primary color glow */
+        }
+
+        input[type="color"] {
+            -webkit-appearance: none; -moz-appearance: none; appearance: none;
+            width: 40px; height: 30px; padding: 0; border: 1px solid #ccc;
+            border-radius: 4px; cursor: pointer; vertical-align: middle;
+        }
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 3px; }
+        input[type="color"]::-moz-color-swatch { border: none; border-radius: 3px; }
+
+        #size-recommendation-display {
+            min-height: 2.5rem; /* Ensure it has some height even when empty */
+            font-weight: 500; /* Medium font weight */
+            color: #4B3F32; /* Primary text color */
+            margin-top: 1rem; /* Space above */
+            text-align: center;
+            padding: 0.75rem; /* Padding inside */
+            border-radius: 8px; /* Rounded corners */
+            background-color: #E5DED5; /* Secondary color background */
+            border: 1px solid #D1C7BD; /* Slightly darker border */
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            width: 100%; /* Full width of its container */
+        }
+         #size-recommendation-display.visible {
+            opacity: 1;
+        }
+
+        #selected-clothing-image-area {
+            min-height: 500px; /* Adjusted for better layout */
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 50px; /* Increased gap for better spacing */
+            margin-top: .5rem; /* Reduced margin top */
+            padding: 15px; /* Standard padding */
+            border: 5px solid #D1C7BD; /* Thicker border */
+            border-radius: 8px; /* Standard border radius */
+            background-color: #F5F1EA; /* Body background color */
+        }
+        #selected-clothing-image-area img {
+            height: 175px; /* Increased height */
+            width: 175px;  /* Increased width */
+            object-fit: contain;
+            border: 1px solid #D1C7BD; /* Standard border */
+            border-radius: 4px;
+            padding: 4px; /* Standard padding */
+            background-color: white;
+        }
+         #selected-clothing-image-area p { /* For the title, if any */
+             font-size: 0.85rem;
+             font-weight: 500;
+             color: #4B3F32;
+         }
+
+        .error-message {
+            color: #E53E3A; /* Tailwind red-600 */
+            font-size: 0.875rem; /* text-sm */
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+         .success-message {
+            color: #38A169; /* Tailwind green-600 */
+            font-size: 0.875rem; /* text-sm */
+            text-align: center;
+            margin-top: 0.5rem;
+        }
+
+        .parent {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            gap: 8px; /* Consistent gap */
+            width: 100%; /* Full width */
+        }
+
+        .div1 {
+            grid-row: span 5 / span 5; /* Full height */
+            overflow-y: auto;
+        }
+
+        .div6 {
+            grid-column: span 2 / span 2; /* Takes 2 columns */
+            grid-row: span 5 / span 5; /* Full height */
+            overflow: hidden; /* Hide overflow for mannequin */
+        }
+
+        .div8 {
+            grid-column: span 2 / span 2; /* Takes 2 columns */
+            grid-row: span 2 / span 2; /* Takes 2 rows */
+            grid-column-start: 4; /* Starts at 4th column */
+            overflow-y: auto;
+        }
+
+        .div10 {
+            grid-column: span 2 / span 2; /* Takes 2 columns */
+            grid-row: span 3 / span 3; /* Takes 3 rows */
+            grid-column-start: 4; /* Starts at 4th column */
+            grid-row-start: 3; /* Starts at 3rd row */
+            overflow-y: auto;
+        }
+
+        /* Custom styles for file input area */
+        .file-upload-area {
+            border: 2px dashed #A78B71; /* Primary color dashed border */
+            border-radius: 8px; /* Match button border-radius */
+            padding: 1rem;
+            text-align: center;
+            cursor: pointer;
+            background-color: #E5DED5; /* Secondary color background */
+            transition: background-color 0.2s ease;
+        }
+        .file-upload-area:hover {
+            background-color: #D1C7BD; /* Slightly darker secondary on hover */
+        }
+        .file-upload-area.dragover {
+            background-color: #C0B2A3; /* Even darker on drag over */
+            border-color: #4B3F32; /* Primary text color */
+        }
+
+    </style>
+</head>
+<body id="studio-page" class="bg-[#F5F1EA] flex flex-col min-h-screen font-inter">
+
+    <header id="main-header" class="bg-white shadow-sm">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="flex items-center">
+                 <h1 class="text-2xl font-pacifico text-primary mr-10">try on</h1>
+                 <nav class="hidden md:flex space-x-8">
+                    <a href="studio.html" id="nav-dashboard" class="text-primary font-medium">Model Studio</a>
+                    <a href="gallery.html" id="nav-gallery" class="text-gray-600 hover:text-primary transition-colors font-medium">My Gallery</a>
+                    <a href="account.html" id="nav-account" class="text-gray-600 hover:text-primary transition-colors font-medium">Account</a>
+                </nav>
+            </div>
+             <div class="flex items-center space-x-6">
+                <a href="account.html" class="text-gray-600 hover:text-primary transition-colors">
+                    <div class="w-6 h-6 flex items-center justify-center">
+                        <i class="ri-user-line"></i>
+                    </div>
+                </a>
+                 <a href="#" id="nav-logout" class="text-gray-600 hover:text-primary transition-colors">
+                    <div class="w-6 h-6 flex items-center justify-center">
+                        <i class="ri-logout-box-line"></i>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="main-content flex-grow py-8">
+        <div class="container mx-auto px-6">
+            <div class="parent">
+                <div class="div1 bg-white p-6 rounded shadow-sm space-y-6 flex flex-col">
+                    <div>
+                        <h3 class="text-xl font-semibold text-[#4B3F32] mb-6 border-b border-gray-200 pb-3">Model Selection</h3>
+                        <div id="model-selection-area" class="flex items-center space-x-4 mb-4">
+                            <button data-model-type="default" data-gender="female" class="model-select-btn flex-1 bg-white hover:bg-gray-50 text-primary border border-primary py-2 px-3 rounded-button text-sm transition duration-150 ease-in-out">
+                                <i class="ri-women-line mr-2"></i>Female
+                            </button>
+                            <button data-model-type="default" data-gender="male" class="model-select-btn flex-1 bg-white hover:bg-gray-50 text-primary border border-primary py-2 px-3 rounded-button text-sm transition duration-150 ease-in-out">
+                                <i class="ri-men-line mr-2"></i>Male
+                            </button>
+                            <div id="uploaded-model-selector" class="hidden flex-col items-center space-y-2">
+                                <img id="uploaded-model-preview-btn" src="https://placehold.co/50x50/e0e0e0/777777?text=Upload" alt="Uploaded Model Preview" title="Select Uploaded Model"
+                                     class="uploaded-model-preview" data-model-type="uploaded">
+                                <button id="remove-uploaded-model-btn" class="text-red-600 hover:text-red-800 text-xs font-medium hidden">Remove</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-gray-200">
+                        <h3 class="text-xl font-semibold text-[#4B3F32] mb-6">Current Model Size</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="current-model-height" class="block text-sm text-gray-600 mb-1">Height (cm):</label>
+                                <input type="number" id="current-model-height" name="currentModelHeight" min="100" max="300" value="170"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-button shadow-sm focus:outline-none focus:ring-1 focus:ring-primary text-sm">
+                            </div>
+                            <div>
+                                <label for="current-model-weight" class="block text-sm text-gray-600 mb-1">Weight (kg):</label>
+                                <input type="number" id="current-model-weight" name="currentModelWeight" min="20" max="300" value="70"
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-button shadow-sm focus:outline-none focus:ring-1 focus:ring-primary text-sm">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-t border-gray-200">
+                        <h3 class="text-xl font-semibold text-[#4B3F32] mb-6">Upload Your Model</h3>
+                        <form id="upload-model-form" class="space-y-4">
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Model Gender:</label>
+                                <div class="flex space-x-4">
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="uploadModelGender" value="female" class="hidden" checked>
+                                        <div class="custom-radio checked mr-2"></div>
+                                        <span class="text-sm text-gray-700">Female</span>
+                                    </label>
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" name="uploadModelGender" value="male" class="hidden">
+                                        <div class="custom-radio mr-2"></div>
+                                        <span class="ml-2 text-sm text-gray-700">Male</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="model-file-input" class="block text-sm text-gray-600 mb-1">Model Image:</label>
+                                <div class="file-upload-area" id="model-upload-drop-area">
+                                    <div class="w-8 h-8 mx-auto mb-2 flex items-center justify-center">
+                                        <i class="ri-upload-2-line ri-xl text-gray-400"></i>
+                                    </div>
+                                    <p class="text-sm text-gray-500 mb-2" id="model-file-name-display">Drag & drop or click to upload</p>
+                                    <p class="text-xs text-gray-400">Supported formats: JPG, PNG, WEBP</p>
+                                    <input type="file" id="model-file-input" name="modelFile" accept="image/png, image/jpeg, image/webp" class="hidden" required>
+                                </div>
+                                <p class="text-xs text-gray-500 mt-2">Use a clear, full-body image with a plain background for best results.</p>
+                            </div>
+                            <button type="submit" id="upload-model-submit-btn" class="w-full bg-primary hover:bg-opacity-90 text-white py-2 px-3 rounded-button text-sm font-semibold transition duration-150 ease-in-out">
+                                <div class="flex items-center justify-center">
+                                     <i class="ri-upload-line mr-2"></i>Upload & Use Model
+                                </div>
+                            </button>
+                            <div id="upload-model-message" class="text-xs mt-1 hidden text-center"></div>
+                        </form>
+                    </div>
+
+                    <div class="pt-4 border-t border-gray-200">
+                        <h3 class="text-xl font-semibold text-[#4B3F32] mb-6">Upload Your Clothes</h3>
+                        <form id="upload-clothes-form" class="space-y-4">
+                            <div>
+                                <label for="clothing-name-input" class="block text-sm text-gray-600 mb-1">Clothing Name:</label>
+                                <input type="text" id="clothing-name-input" name="clothingName" required
+                                       class="w-full px-3 py-2 border border-gray-300 rounded-button shadow-sm focus:outline-none focus:ring-1 focus:ring-primary text-sm" placeholder="e.g., Blue Denim Jacket">
+                            </div>
+                            <div>
+                                <label class="block text-sm text-gray-600 mb-1">Gender for Clothing:</label>
+                                <div class="flex space-x-4">
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" id="clothing-gender-female" name="clothingGender" value="female" class="hidden" checked>
+                                        <div class="custom-radio checked mr-2"></div>
+                                        <span class="text-sm text-gray-700">Female</span>
+                                    </label>
+                                    <label class="inline-flex items-center cursor-pointer">
+                                        <input type="radio" id="clothing-gender-male" name="clothingGender" value="male" class="hidden">
+                                        <div class="custom-radio mr-2"></div>
+                                        <span class="ml-2 text-sm text-gray-700">Male</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div>
+                                <label for="clothing-category-upload" class="block text-sm text-gray-600 mb-1">Clothing Category:</label>
+                                <select id="clothing-category-upload" name="clothingCategoryUpload" required
+                                        class="w-full px-3 py-2 border border-gray-300 rounded-button shadow-sm focus:outline-none focus:ring-1 focus:ring-primary text-sm bg-white">
+                                    {/* Options will be populated by JavaScript based on gender */}
+                                </select>
+                            </div>
+                            <div>
+                                <label for="clothing-file-input" class="block text-sm text-gray-600 mb-1">Clothing Image:</label>
+                                <div class="file-upload-area" id="clothing-upload-drop-area">
+                                    <div class="w-8 h-8 mx-auto mb-2 flex items-center justify-center">
+                                        <i class="ri-shirt-line ri-xl text-gray-400"></i>
+                                    </div>
+                                    <p class="text-sm text-gray-500 mb-2" id="clothing-file-name-display">Drag & drop or click to upload</p>
+                                    <p class="text-xs text-gray-400">PNG with transparent background recommended for Tops/One Piece.</p>
+                                    <input type="file" id="clothing-file-input" name="clothingFile" accept="image/png, image/jpeg, image/webp" class="hidden" required>
+                                </div>
+                            </div>
+                            <button type="submit" id="upload-clothes-submit-btn" class="w-full bg-primary hover:bg-opacity-90 text-white py-2 px-3 rounded-button text-sm font-semibold transition duration-150 ease-in-out">
+                                <div class="flex items-center justify-center">
+                                    <i class="ri-add-circle-line mr-2"></i>Add to My Clothes
+                                </div>
+                            </button>
+                            <div id="upload-clothes-message" class="text-xs mt-1 hidden text-center"></div>
+                        </form>
+                    </div>
+
+                    <div class="pt-6 border-t border-gray-200 flex-grow flex flex-col">
+                        <h3 class="text-xl font-semibold text-[#4B3F32] mb-6 border-b border-gray-200 pb-3">Background Settings</h3>
+                        <div class="flex items-center space-x-3 mb-4">
+                             <label for="bg-color-picker" title="Choose Background Color" class="text-sm text-gray-600">
+                                <i class="ri-palette-line mr-1"></i>BG:
+                             </label>
+                             <input type="color" id="bg-color-picker" value="#f1f5f9" class="w-10 h-8 border border-gray-300 rounded cursor-pointer">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="div6 bg-white p-6 rounded shadow-sm flex flex-col items-center">
+                    <h2 class="text-xl font-semibold text-[#4B3F32] mb-6 self-center">Model</h2>
+                    <div id="studio-mannequin-container" class="mannequin-container-large w-full max-w-xs sm:max-w-sm md:max-w-md mx-auto rounded-lg mb-6">
+                        <i id="loading-spinner" class="fas fa-spinner loading-spinner hidden"></i>
+                        <img id="model-image-female" src="C:/Users/Administrator/Desktop/try on 2/female.png" alt="Female Model" class="model-image hidden" data-gender="female" onerror="this.onerror=null; this.src='https://placehold.co/300x500/f871b3/ffffff?text=Female+Model+Missing';">
+                        <img id="model-image-male" src="C:/Users/Administrator/Desktop/try on 2/male.png" alt="Male Model" class="model-image hidden" data-gender="male" onerror="this.onerror=null; this.src='https://placehold.co/300x500/3b82f6/ffffff?text=Male+Model+Missing';">
+                        <img id="model-image-uploaded" src="" alt="Uploaded Model" class="model-image hidden" data-gender="" onerror="this.onerror=null; this.src='https://placehold.co/300x500/d1d5db/ffffff?text=Upload+Error';">
+                    </div>
+                </div>
+
+                <div class="div8 bg-white p-6 rounded shadow-sm flex flex-col">
+                    <h2 class="text-xl font-semibold text-[#4B3F32] mb-6 border-b border-gray-200 pb-3">Clothing Items</h2>
+                    <div class="mb-6">
+                         <div class="flex space-x-2 mb-4 overflow-x-auto py-1">
+                             <select id="clothing-category-filter" name="clothingCategory" class="w-full px-3 py-1.5 border border-gray-300 rounded-button shadow-sm focus:outline-none focus:ring-1 focus:ring-primary text-sm bg-white">
+                                <option value="All">All</option>
+                                <option value="Tops">Tops</option>
+                                <option value="Bottoms">Bottoms</option>
+                                <option value="One Piece">One Piece</option>
+                            </select>
+                        </div>
+                         <div class="relative mb-4">
+                            <input type="text" id="clothing-search-input" placeholder="Search items..." class="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-button focus:outline-none focus:ring-1 focus:ring-primary text-sm">
+                            <div class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center">
+                                <i class="ri-search-line text-gray-400"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="clothing-item-grid" class="clothing-grid mb-4 flex-grow">
+                        <p class="text-gray-500 text-sm col-span-full text-center p-4">Loading clothing...</p>
+                    </div>
+                </div>
+
+                <div class="div10 bg-white p-6 rounded shadow-sm flex flex-col items-center">
+                     <div class="w-full max-w-md mx-auto mt-4">
+                         <div class="flex flex-col items-center justify-center mb-4">
+                             <div id="size-recommendation-display" class="text-sm bg-secondary bg-opacity-20 p-4 rounded mb-4 w-full">
+                               
+                             </div>
+                             <div id="selected-clothing-image-area" class="mt-3 text-center hidden w-full">
+                               
+                             </div>
+                        </div>
+                        <div id="studio-error-message" class="error-message hidden text-red-600 text-sm text-center mb-2"></div>
+                        <div id="studio-success-message" class="success-message hidden text-green-600 text-sm text-center mb-2"></div>
+
+                        <div class="w-full flex justify-between mt-4">
+                             <button id="studio-reset-btn" class="bg-white text-primary border border-primary px-4 py-2 rounded-button whitespace-nowrap hover:bg-gray-50 transition-colors">
+                                <div class="flex items-center">
+                                    <div class="w-5 h-5 mr-2 flex items-center justify-center">
+                                        <i class="ri-refresh-line"></i>
+                                    </div>
+                                    <span>Reset</span>
+                                </div>
+                            </button>
+                             <button id="save-to-gallery-btn" class="bg-primary text-white px-6 py-2 rounded-button whitespace-nowrap hover:bg-opacity-90 transition-colors">
+                                <div class="flex items-center">
+                                    <div class="w-5 h-5 mr-2 flex items-center justify-center">
+                                        <i class="ri-camera-line"></i>
+                                    </div>
+                                    <span>Save to Gallery</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div> </div> </div> <div id="clothing-preview-modal" class="modal">
+        <div class="modal-content">
+            <span id="modal-close-button" class="modal-close-btn">&times;</span>
+            <h3 id="modal-clothing-name" class="text-lg font-semibold text-[#4B3F32] mb-3 text-center">Clothing Preview</h3>
+            <img id="modal-clothing-image" src="https://placehold.co/400x400/e0e0e0/777777?text=Clothing" alt="Clothing Preview">
+            <div id="modal-size-recommendation" class="mt-2">Recommended Size: N/A</div>
+            <button id="modal-try-on-button" class="mt-4 w-full bg-primary hover:bg-opacity-90 text-white py-2 px-4 rounded-button text-sm font-semibold transition duration-150 ease-in-out">
+                Try This On Model
+            </button>
+        </div>
+    </div>
+
+
+    <footer id="main-footer" class="bg-white text-gray-600 text-center py-4 mt-auto shadow-sm">
+        <p>&copy; 2025 Virtual TRY ON. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js" defer></script>
+
+    <script>
+        // This inline script handles UI interactions that are simple and don't require complex state management from script.js
+        // It's kept separate for clarity and to avoid bloating script.js with pure DOM manipulation for simple effects.
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Custom Radio Button Styling ---
+            function setupCustomRadios(containerSelector, radioGroupName) {
+                const radioContainer = document.querySelector(containerSelector);
+                if (!radioContainer) return;
+
+                radioContainer.addEventListener('click', function(event) {
+                    const label = event.target.closest('label');
+                    if (!label) return;
+
+                    const input = label.querySelector(`input[type="radio"][name="${radioGroupName}"]`);
+                    if (input) {
+                        // Uncheck all custom radios in this group
+                        radioContainer.querySelectorAll('.custom-radio').forEach(cr => cr.classList.remove('checked'));
+                        // Check the clicked one
+                        label.querySelector('.custom-radio')?.classList.add('checked');
+                        // Ensure the actual radio input is checked (though it might already be by browser default)
+                        if (!input.checked) {
+                           input.checked = true;
+                           // Dispatch change event if other parts of the script listen for it
+                           input.dispatchEvent(new Event('change', { bubbles: true }));
+                        }
+                    }
+                });
+
+                // Initial state sync
+                const checkedInput = radioContainer.querySelector(`input[type="radio"][name="${radioGroupName}"]:checked`);
+                if (checkedInput) {
+                    checkedInput.closest('label')?.querySelector('.custom-radio')?.classList.add('checked');
+                } else { // If no radio is checked by default, check the first one
+                    const firstInput = radioContainer.querySelector(`input[type="radio"][name="${radioGroupName}"]`);
+                    if (firstInput) {
+                        firstInput.checked = true;
+                        firstInput.closest('label')?.querySelector('.custom-radio')?.classList.add('checked');
+                        firstInput.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                }
+            }
+
+            setupCustomRadios('#upload-model-form', 'uploadModelGender');
+            setupCustomRadios('#upload-clothes-form', 'clothingGender');
+
+
+            // --- File Upload Area Click & Drag/Drop ---
+            function setupFileUploadArea(inputId, dropAreaId, fileNameDisplayId) {
+                const fileInput = document.getElementById(inputId);
+                const dropArea = document.getElementById(dropAreaId);
+                const fileNameDisplay = document.getElementById(fileNameDisplayId);
+
+                if (!fileInput || !dropArea || !fileNameDisplay) return;
+
+                dropArea.addEventListener('click', () => fileInput.click());
+
+                fileInput.addEventListener('change', () => {
+                    if (fileInput.files && fileInput.files[0]) {
+                        fileNameDisplay.textContent = `Selected: ${fileInput.files[0].name}`;
+                        dropArea.classList.add('border-primary', 'bg-secondary', 'bg-opacity-20');
+                    } else {
+                        fileNameDisplay.textContent = dropArea.dataset.defaultText || 'Drag & drop or click to upload';
+                        dropArea.classList.remove('border-primary', 'bg-secondary', 'bg-opacity-20');
+                    }
+                });
+
+                // Drag and drop events
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    dropArea.addEventListener(eventName, preventDefaults, false);
+                });
+
+                function preventDefaults(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+
+                dropArea.addEventListener('dragenter', () => dropArea.classList.add('dragover'), false);
+                dropArea.addEventListener('dragleave', () => dropArea.classList.remove('dragover'), false);
+                dropArea.addEventListener('dragover', () => dropArea.classList.add('dragover'), false); // Keep class while hovering
+
+                dropArea.addEventListener('drop', (e) => {
+                    dropArea.classList.remove('dragover');
+                    const dt = e.dataTransfer;
+                    const files = dt.files;
+                    if (files.length > 0) {
+                        fileInput.files = files; // Assign dropped files to the input
+                        const changeEvent = new Event('change'); // Create a new event
+                        fileInput.dispatchEvent(changeEvent); // Dispatch the event
+                    }
+                }, false);
+
+                // Store default text for reset
+                dropArea.dataset.defaultText = fileNameDisplay.textContent;
+            }
+
+            setupFileUploadArea('model-file-input', 'model-upload-drop-area', 'model-file-name-display');
+            setupFileUploadArea('clothing-file-input', 'clothing-upload-drop-area', 'clothing-file-name-display');
+
+        }); // End DOMContentLoaded
+    </script>
+
+
+</body>
+</html>

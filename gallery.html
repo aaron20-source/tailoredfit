@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Virtual TRY ON - My Gallery</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body id="gallery-page" class="bg-gray-100 flex flex-col min-h-screen">
+
+    <header id="main-header" class="bg-white shadow-md py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold text-gray-800">Virtual TRY ON</h1>
+            <nav>
+                <a href="studio.html" id="nav-dashboard" class="text-gray-600 hover:text-blue-500 px-3 py-2 rounded-md text-sm font-medium">Try-On Studio</a>
+                <a href="gallery.html" id="nav-gallery" class="text-blue-600 font-semibold px-3 py-2 rounded-md text-sm">My Gallery</a>
+                <a href="account.html" id="nav-account" class="text-gray-600 hover:text-blue-500 px-3 py-2 rounded-md text-sm font-medium">Account</a>
+                <a href="#" id="nav-logout" class="text-red-600 hover:text-red-800 px-3 py-2 rounded-md text-sm font-medium">Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <div class="main-content flex-grow pt-8 pb-12">
+        <div class="container mx-auto px-4">
+            <div class="bg-white p-6 rounded-lg shadow-md">
+                <h2 class="text-2xl font-semibold text-gray-700 mb-6 border-b pb-3">My Saved Clothing</h2>
+                <div id="gallery-items-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                    </div>
+                <p id="gallery-empty-message" class="text-gray-500 hidden mt-6">Your gallery is empty. Save items from the Try-On Studio!</p>
+            </div>
+        </div>
+    </div>
+
+    <footer id="main-footer" class="bg-gray-800 text-white text-center py-4 mt-auto">
+        <p>&copy; 2025 Virtual TRY ON. All rights reserved.</p>
+    </footer>
+
+    <script src="script.js" defer></script>
+
+</body>
+</html>

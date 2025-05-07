@@ -1,0 +1,95 @@
+/* Background Setup */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  background: url('C:/Users/Administrator/Desktop/try on 2/forgot.html/background.jpg') no-repeat center center fixed;
+  background-size: cover;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Form Container */
+.container, .screen {
+  background: white;
+  padding: 40px 30px;
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+}
+
+/* Model Image */
+.model-image {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin: 0 auto 20px auto;
+  display: block;
+}
+
+/* Headings and Paragraphs */
+h2 {
+  margin-bottom: 15px;
+  color: #2e2e2e;
+}
+
+p {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+/* Inputs */
+input {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+
+/* Buttons */
+button {
+  width: 100%;
+  padding: 12px 0;
+  background-color: #a58968;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 10px;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+button:hover {
+  background-color: #8a7158;
+}
+
+/* Links */
+a {
+  display: block;
+  margin-top: 15px;
+  font-size: 13px;
+  color: #777;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Screens hidden by default except active */
+.screen {
+  display: none;
+}
+
+.screen.active {
+  display: block;
+}

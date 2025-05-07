@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title> TRY ON - Login & Register</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>tailwind.config={theme:{extend:{colors:{primary:'#c8a27a',secondary:'#8a7a63'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+<style>
+/* Ensure Remixicon content is correct if needed, though Tailwind classes are preferred */
+/* :where([class^="ri-"])::before { content: "\f3c2"; } */
+
+body {
+font-family: 'Poppins', sans-serif;
+}
+.form-container {
+background-color: rgba(255, 255, 255, 0.95);
+backdrop-filter: blur(10px);
+}
+.tab-active {
+color: #c8a27a;
+border-bottom: 2px solid #c8a27a;
+}
+/* Updated focus style for form inputs */
+.form-input:focus {
+border-color: #c8a27a;
+box-shadow: 0 0 0 2px rgba(200, 162, 122, 0.2);
+outline: none; /* Remove default outline */
+}
+.password-strength {
+height: 4px;
+transition: width 0.3s;
+}
+/* Style for the custom toggle switch */
+#remember-me:checked + label {
+    background-color: #c8a27a; /* Primary color when checked */
+}
+#remember-me:checked + label .toggle-dot {
+    transform: translateX(1.5rem); /* Move dot when checked */
+}
+
+/* Styles for validation feedback */
+.mb-5.error .form-input,
+.form-control.error input {
+    border-color: #ef4444; /* Red 500 */
+    padding-right: 2.5rem; /* Make space for icon */
+}
+
+.mb-5.success .form-input,
+.form-control.success input {
+    border-color: #22c55e; /* Green 500 */
+     padding-right: 2.5rem; /* Make space for icon */
+}
+
+/* Position validation icons */
+.mb-5 .validation-icon,
+.form-control .validation-icon {
+    position: absolute;
+    top: 50%;
+    right: 0.75rem; /* Adjust position */
+    transform: translateY(-50%);
+    pointer-events: none; /* Don't interfere with input clicks */
+    font-size: 1rem; /* Adjust size */
+}
+
+.mb-5.error .validation-icon-error,
+.form-control.error .validation-icon-error {
+    color: #ef4444; /* Red 500 */
+    display: block; /* Show error icon */
+}
+
+.mb-5.success .validation-icon-check,
+.form-control.success .validation-icon-check {
+    color: #22c55e; /* Green 500 */
+    display: block; /* Show success icon */
+}
+
+.mb-5 .validation-icon-check,
+.mb-5 .validation-icon-error,
+.form-control .validation-icon-check,
+.form-control .validation-icon-error {
+    display: none; /* Hide icons by default */
+}
+
+/* Style for small error messages */
+.mb-5 small,
+.form-control small {
+    color: #ef4444; /* Red 500 */
+    font-size: 0.75rem; /* text-xs */
+    margin-top: 0.25rem; /* mt-1 */
+    display: block; /* Ensure it takes its own line */
+}
+
+/* Style for general messages below forms */
+.message-area {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.875rem; /* text-sm */
+    min-height: 1.5rem; /* Reserve space to prevent layout shift */
+}
+.message-area.text-red-600 { color: #dc2626; } /* Red 600 */
+.message-area.text-green-600 { color: #16a34a; } /* Green 600 */
+
+</style>
+</head>
+<body id="login-page" class="min-h-screen flex items-center justify-center bg-gray-50" style="background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://readdy.ai/api/search-image?query=elegant%2520fashion%2520boutique%2520interior%2520with%2520wooden%2520shelves%2520and%2520racks%2520of%2520beige%2520and%2520neutral%2520colored%2520clothing%252C%2520soft%2520lighting%252C%2520minimalist%2520design%252C%2520warm%2520atmosphere%252C%2520high-end%2520retail%2520space%2520with%2520natural%2520materials&width=1920&height=1080&seq=1&orientation=landscape'); background-size: cover; background-position: center;">
+<div class="w-full max-w-md mx-auto p-6">
+<div class="text-center mb-8">
+    <a href="index.html" class="font-['Pacifico'] text-4xl text-white no-underline hover:text-gray-200 transition-colors">try on</a>
+</div>
+<div class="form-container rounded-lg shadow-xl overflow-hidden">
+<div class="flex border-b">
+<button id="login-tab" class="flex-1 py-4 text-center font-medium tab-active transition-all">Login</button>
+<button id="register-tab" class="flex-1 py-4 text-center font-medium text-gray-500 transition-all">Register</button>
+</div>
+<div id="login-form-div" class="p-8"> <h2 class="text-2xl font-semibold mb-6 text-gray-800">Welcome Back</h2>
+<form id="login-form"> <div class="mb-5">
+<label for="login-email" class="block text-sm font-medium mb-2 text-gray-700">Email Address</label> <div class="relative">
+<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+<i class="ri-mail-line text-gray-400"></i>
+</div>
+<input type="email" id="login-email" name="email" class="form-input w-full pl-10 py-3 border border-gray-300 rounded-button focus:outline-none" placeholder="your@email.com"> <i class="ri-check-circle-fill validation-icon validation-icon-check"></i> <i class="ri-error-warning-fill validation-icon validation-icon-error"></i>
+<small></small> </div>
+</div>
+<div class="mb-5">
+<div class="flex justify-between mb-2">
+<label for="login-password" class="block text-sm font-medium text-gray-700">Password</label>
+<a href="forgotpasss.html" class="text-sm text-primary hover:underline">Forgot Password?</a>
+</div>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+<i class="ri-lock-line text-gray-400"></i>
+</div>
+<input type="password" id="login-password" name="password" class="form-input w-full pl-10 py-3 border border-gray-300 rounded-button focus:outline-none" placeholder="••••••••">
+<div class="absolute inset-y-0 right-0 flex items-center pr-3">
+<button type="button" id="toggle-password-login" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 password-toggle-icon" data-target="login-password">
+<i class="ri-eye-line"></i>
+</button>
+</div>
+<i class="ri-check-circle-fill validation-icon validation-icon-check"></i> <i class="ri-error-warning-fill validation-icon validation-icon-error"></i>
+<small></small> </div>
+</div>
+<div class="flex items-center mb-6">
+<div class="relative inline-block w-10 mr-2 align-middle select-none">
+    <input type="checkbox" id="remember-me" name="remember-me" class="opacity-0 absolute w-full h-full cursor-pointer">
+    <label for="remember-me" class="toggle-label block overflow-hidden h-6 rounded-full bg-gray-300 cursor-pointer transition-colors duration-300 ease-in-out">
+    <span class="toggle-dot absolute left-1 top-1 bg-white w-4 h-4 rounded-full transition-transform duration-300 ease-in-out"></span>
+</label>
+</div>
+<label for="remember-me" class="text-sm text-gray-700 cursor-pointer">Remember me</label>
+</div>
+<button type="submit" class="w-full bg-primary text-white py-3 rounded-button font-medium hover:bg-opacity-90 transition-all !rounded-button whitespace-nowrap">Sign In</button>
+</form>
+<div id="login-message" class="message-area text-red-600 hidden" role="alert"></div> <div class="mt-6">
+<div class="relative">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-gray-300"></div>
+</div>
+<div class="relative flex justify-center text-sm">
+<span class="px-2 bg-white text-gray-500">Or continue with</span>
+</div>
+</div>
+<div class="mt-6 grid grid-cols-3 gap-3">
+<button type="button" class="flex justify-center items-center py-2 px-4 border border-gray-300 rounded-button shadow-sm bg-white hover:bg-gray-50 !rounded-button whitespace-nowrap">
+<i class="ri-google-fill text-red-500 mr-2"></i>
+<span class="text-sm font-medium text-gray-700">Google</span>
+</button>
+<button type="button" class="flex justify-center items-center py-2 px-4 border border-gray-300 rounded-button shadow-sm bg-white hover:bg-gray-50 !rounded-button whitespace-nowrap">
+<i class="ri-facebook-fill text-blue-600 mr-2"></i>
+<span class="text-sm font-medium text-gray-700">Facebook</span>
+</button>
+<button type="button" class="flex justify-center items-center py-2 px-4 border border-gray-300 rounded-button shadow-sm bg-white hover:bg-gray-50 !rounded-button whitespace-nowrap">
+<i class="ri-apple-fill text-gray-800 mr-2"></i>
+<span class="text-sm font-medium text-gray-700">Apple</span>
+</button>
+</div>
+</div>
+</div>
+<div id="register-form-div" class="p-8 hidden"> <h2 class="text-2xl font-semibold mb-6 text-gray-800">Create Account</h2>
+<form id="register-form"> <div class="mb-5">
+<label for="register-name" class="block text-sm font-medium mb-2 text-gray-700">Full Name</label> <div class="relative">
+<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+<i class="ri-user-line text-gray-400"></i>
+</div>
+<input type="text" id="register-name" name="name" class="form-input w-full pl-10 py-3 border border-gray-300 rounded-button focus:outline-none" placeholder="John Doe"> <i class="ri-check-circle-fill validation-icon validation-icon-check"></i> <i class="ri-error-warning-fill validation-icon validation-icon-error"></i>
+<small></small> </div>
+</div>
+<div class="mb-5">
+<label for="register-email" class="block text-sm font-medium mb-2 text-gray-700">Email Address</label> <div class="relative">
+<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+<i class="ri-mail-line text-gray-400"></i>
+</div>
+<input type="email" id="register-email" name="email" class="form-input w-full pl-10 py-3 border border-gray-300 rounded-button focus:outline-none" placeholder="your@email.com"> <i class="ri-check-circle-fill validation-icon validation-icon-check"></i> <i class="ri-error-warning-fill validation-icon validation-icon-error"></i>
+<small></small> </div>
+</div>
+<div class="mb-5">
+<label for="register-password" class="block text-sm font-medium mb-2 text-gray-700">Create Password</label> <div class="relative">
+<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+<i class="ri-lock-line text-gray-400"></i>
+</div>
+<input type="password" id="register-password" name="password" class="form-input w-full pl-10 py-3 border border-gray-300 rounded-button focus:outline-none" placeholder="••••••••"> <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+<button type="button" id="toggle-password-register" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 password-toggle-icon" data-target="register-password"> <i class="ri-eye-line"></i>
+</button>
+</div>
+<i class="ri-check-circle-fill validation-icon validation-icon-check"></i> <i class="ri-error-warning-fill validation-icon validation-icon-error"></i>
+<small></small> </div>
+<div class="mt-2">
+<div class="w-full bg-gray-200 rounded-full h-1">
+<div id="password-strength" class="password-strength bg-red-500 rounded-full" style="width: 0%"></div>
+</div>
+<p id="password-strength-text" class="text-xs mt-1 text-gray-500">Password strength: Too weak</p>
+</div>
+</div>
+<div class="mb-5">
+<label for="confirm-password" class="block text-sm font-medium mb-2 text-gray-700">Confirm Password</label> <div class="relative">
+<div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+<i class="ri-lock-line text-gray-400"></i>
+</div>
+<input type="password" id="confirm-password" name="confirm_password" class="form-input w-full pl-10 py-3 border border-gray-300 rounded-button focus:outline-none" placeholder="••••••••"> <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+<button type="button" id="toggle-password-confirm" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 password-toggle-icon" data-target="confirm-password"> <i class="ri-eye-line"></i>
+</button>
+</div>
+<i class="ri-check-circle-fill validation-icon validation-icon-check"></i> <i class="ri-error-warning-fill validation-icon validation-icon-error"></i>
+<small></small> </div>
+</div>
+<div class="flex items-center mb-6">
+<input type="checkbox" id="terms" name="terms" class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded"> <label for="terms" class="ml-2 block text-sm text-gray-700">
+I agree to the <a href="#" class="text-primary hover:underline">Terms of Service</a> and <a href="#" class="text-primary hover:underline">Privacy Policy</a>
+</label>
+</div>
+<button type="submit" class="w-full bg-primary text-white py-3 rounded-button font-medium hover:bg-opacity-90 transition-all !rounded-button whitespace-nowrap">Create Account</button>
+</form>
+<div id="register-message" class="message-area text-red-600 hidden" role="alert"></div> <div class="mt-6">
+<div class="relative">
+<div class="absolute inset-0 flex items-center">
+<div class="w-full border-t border-gray-300"></div>
+</div>
+<div class="relative flex justify-center text-sm">
+<span class="px-2 bg-white text-gray-500">Or continue with</span>
+</div>
+</div>
+<div class="mt-6 grid grid-cols-3 gap-3">
+<button type="button" class="flex justify-center items-center py-2 px-4 border border-gray-300 rounded-button shadow-sm bg-white hover:bg-gray-50 !rounded-button whitespace-nowrap">
+<i class="ri-google-fill text-red-500 mr-2"></i>
+<span class="text-sm font-medium text-gray-700">Google</span>
+</button>
+<button type="button" class="flex justify-center items-center py-2 px-4 border border-gray-300 rounded-button shadow-sm bg-white hover:bg-gray-50 !rounded-button whitespace-nowrap">
+<i class="ri-facebook-fill text-blue-600 mr-2"></i>
+<span class="text-sm font-medium text-gray-700">Facebook</span>
+</button>
+<button type="button" class="flex justify-center items-center py-2 px-4 border border-gray-300 rounded-button shadow-sm bg-white hover:bg-gray-50 !rounded-button whitespace-nowrap">
+<i class="ri-apple-fill text-gray-800 mr-2"></i>
+<span class="text-sm font-medium text-gray-700">Apple</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script src="script.js" defer></script> <script>
+// --- Local Script for Tab Switching and Password Toggle (can be moved to script.js if preferred) ---
+document.addEventListener('DOMContentLoaded', function() {
+    const loginTab = document.getElementById('login-tab');
+    const registerTab = document.getElementById('register-tab');
+    const loginFormDiv = document.getElementById('login-form-div'); // Use the div ID
+    const registerFormDiv = document.getElementById('register-form-div'); // Use the div ID
+
+    // Function to switch tabs
+    function switchTab(targetTabId) {
+        if (targetTabId === 'login-tab') {
+            loginTab.classList.add('tab-active');
+            registerTab.classList.remove('tab-active');
+            registerTab.classList.add('text-gray-500');
+            loginTab.classList.remove('text-gray-500'); // Ensure login tab is not grayed out
+            loginFormDiv.classList.remove('hidden');
+            registerFormDiv.classList.add('hidden');
+             // Clear register form state when switching to login
+             const registerForm = document.getElementById('register-form');
+             if(registerForm && typeof clearFormStates === 'function') clearFormStates([registerForm]); // Assuming clearFormStates is in script.js
+        } else if (targetTabId === 'register-tab') {
+            registerTab.classList.add('tab-active');
+            loginTab.classList.remove('tab-active');
+            loginTab.classList.add('text-gray-500');
+             registerTab.classList.remove('text-gray-500'); // Ensure register tab is not grayed out
+            registerFormDiv.classList.remove('hidden');
+            loginFormDiv.classList.add('hidden');
+             // Clear login form state when switching to register
+             const loginForm = document.getElementById('login-form');
+             if(loginForm && typeof clearFormStates === 'function') clearFormStates([loginForm]); // Assuming clearFormStates is in script.js
+        }
+    }
+
+    // Add click listeners to tabs
+    if(loginTab) loginTab.addEventListener('click', function() { switchTab('login-tab'); });
+    if(registerTab) registerTab.addEventListener('click', function() { switchTab('register-tab'); });
+
+
+    // Handle URL hash for initial tab selection (e.g., login.html#register)
+    const hash = window.location.hash;
+    if (hash === '#register') {
+        switchTab('register-tab');
+    } else {
+        switchTab('login-tab'); // Default to login tab
+    }
+
+
+    // Password strength meter for registration password
+    const passwordInput = document.getElementById('register-password');
+    const passwordStrength = document.getElementById('password-strength');
+    const passwordStrengthText = document.getElementById('password-strength-text');
+
+    if (passwordInput && passwordStrength && passwordStrengthText) {
+        passwordInput.addEventListener('input', function() {
+            const password = passwordInput.value;
+            let strength = 0;
+            if (password.length >= 6) strength += 25; // Basic length check
+            if (password.match(/[A-Z]/)) strength += 25;
+            if (password.match(/[0-9]/)) strength += 25;
+            if (password.match(/[^A-Za-z0-9]/)) strength += 25;
+
+            passwordStrength.style.width = strength + '%';
+
+            if (strength <= 25) {
+                passwordStrength.className = 'password-strength bg-red-500 rounded-full';
+                passwordStrengthText.textContent = 'Password strength: Too weak';
+                 passwordStrengthText.classList.remove('text-orange-500', 'text-yellow-500', 'text-green-500');
+                 passwordStrengthText.classList.add('text-red-500');
+            } else if (strength <= 50) {
+                passwordStrength.className = 'password-strength bg-orange-500 rounded-full';
+                passwordStrengthText.textContent = 'Password strength: Weak';
+                 passwordStrengthText.classList.remove('text-red-500', 'text-yellow-500', 'text-green-500');
+                 passwordStrengthText.classList.add('text-orange-500');
+            } else if (strength <= 75) {
+                passwordStrength.className = 'password-strength bg-yellow-500 rounded-full';
+                passwordStrengthText.textContent = 'Password strength: Good';
+                 passwordStrengthText.classList.remove('text-red-500', 'text-orange-500', 'text-green-500');
+                 passwordStrengthText.classList.add('text-yellow-500');
+            } else {
+                passwordStrength.className = 'password-strength bg-green-500 rounded-full';
+                passwordStrengthText.textContent = 'Password strength: Strong';
+                 passwordStrengthText.classList.remove('text-red-500', 'text-orange-500', 'text-yellow-500');
+                 passwordStrengthText.classList.add('text-green-500');
+            }
+             // Clear password strength text if password is empty
+             if (password.length === 0) {
+                 passwordStrengthText.textContent = '';
+                 passwordStrength.style.width = '0%';
+                 passwordStrengthText.classList.remove('text-red-500', 'text-orange-500', 'text-yellow-500', 'text-green-500');
+             }
+        });
+    } else {
+        console.warn("Password strength meter elements not found.");
+    }
+
+    // Handle "Remember me" toggle switch visual state
+    // This part handles the visual update. The actual saving/loading logic is in script.js
+    const rememberMeCheckbox = document.getElementById('remember-me');
+    const toggleLabel = rememberMeCheckbox?.nextElementSibling; // The label that is the visual switch
+    const toggleDot = toggleLabel?.querySelector('.toggle-dot');
+
+    function updateRememberMeToggleVisual() {
+        if (rememberMeCheckbox && toggleLabel && toggleDot) {
+            if (rememberMeCheckbox.checked) {
+                toggleDot.classList.add('translate-x-full'); // Tailwind class for full translation
+                toggleLabel.classList.add('bg-primary');
+                toggleLabel.classList.remove('bg-gray-300');
+            } else {
+                toggleDot.classList.remove('translate-x-full');
+                toggleLabel.classList.remove('bg-primary');
+                toggleLabel.classList.add('bg-gray-300');
+            }
+        }
+    }
+
+    if (rememberMeCheckbox) {
+        // Set initial state on load (script.js will set the checkbox's `checked` property)
+        updateRememberMeToggleVisual(); // Call once to set initial visual based on checkbox state
+
+        // Update visual on change
+        rememberMeCheckbox.addEventListener('change', updateRememberMeToggleVisual);
+    } else {
+         console.warn("'Remember me' checkbox or toggle elements not found.");
+    }
+
+    // Add password toggle icons using the utility function from script.js
+    // Assuming script.js is loaded and the togglePasswordVisibility function is available globally
+    // This is duplicated from your script.js, ensure only one set of listeners is active.
+    // If togglePasswordVisibility is in script.js and script.js is deferred, this should be fine.
+    if (typeof togglePasswordVisibility === 'function') {
+        document.querySelectorAll('.password-toggle-icon').forEach(icon => {
+            icon.addEventListener('click', togglePasswordVisibility);
+             // Ensure initial icon state matches input type on page load
+             const targetInputId = icon.getAttribute('data-target');
+             const targetInput = document.getElementById(targetInputId);
+             if (targetInput) {
+                 const isPassword = targetInput.type === 'password';
+                 icon.querySelector('i').classList.toggle('ri-eye-line', isPassword);
+                 icon.querySelector('i').classList.toggle('ri-eye-off-line', !isPassword);
+             }
+        });
+    }
+
+
+}); // End DOMContentLoaded for local script block
+</script>
+</body>
+</html>

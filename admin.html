@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Virtual TRY ON</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://rsms.me/">
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6; /* Tailwind gray-100 */
+        }
+        .sidebar {
+            width: 260px;
+            transition: transform 0.3s ease-in-out;
+        }
+        .main-content {
+            margin-left: 260px;
+            transition: margin-left 0.3s ease-in-out;
+        }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1.25rem;
+            color: #d1d5db; /* Tailwind gray-300 */
+            border-radius: 0.5rem; /* Tailwind rounded-lg */
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .sidebar-link:hover, .sidebar-link.active {
+            background-color: #4b5563; /* Tailwind gray-700 */
+            color: white;
+        }
+        .sidebar-link i {
+            margin-right: 0.75rem;
+            width: 20px; /* Ensure icons align */
+        }
+        /* Simple modal styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.6);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 25px;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 0.5rem; /* Tailwind rounded-lg */
+            position: relative;
+        }
+        .modal-close {
+            color: #aaa;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .modal-close:hover,
+        .modal-close:focus {
+            color: black;
+            text-decoration: none;
+        }
+        /* Table styling */
+        th, td {
+            padding: 0.75rem; /* Tailwind p-3 */
+            text-align: left;
+            border-bottom-width: 1px; /* Tailwind border-b */
+            border-color: #e5e7eb; /* Tailwind gray-200 */
+        }
+        thead th {
+            background-color: #f9fafb; /* Tailwind gray-50 */
+            font-weight: 600; /* Tailwind font-semibold */
+            color: #374151; /* Tailwind gray-700 */
+        }
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+                position: fixed;
+                z-index: 50;
+                height: 100%;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .main-content.sidebar-open {
+                margin-left: 260px; /* Only when sidebar explicitly opened */
+            }
+            .modal-content {
+                width: 95%;
+                margin-top: 5%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="flex h-screen">
+        <aside id="sidebar" class="sidebar bg-gray-800 text-gray-100 p-4 space-y-2 fixed top-0 left-0 h-full overflow-y-auto">
+            <div class="text-white text-2xl font-semibold p-3 mb-4">Admin Panel</div>
+            <a href="#dashboard" class="sidebar-link active" data-target="dashboard-section">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+            <a href="#users" class="sidebar-link" data-target="users-section">
+                <i class="fas fa-users"></i> User Management
+            </a>
+            <a href="#clothing" class="sidebar-link" data-target="clothing-section">
+                <i class="fas fa-tshirt"></i> Clothing Items
+            </a>
+            <a href="#settings" class="sidebar-link" data-target="settings-section">
+                <i class="fas fa-cog"></i> Settings
+            </a>
+             <a href="#" id="admin-logout" class="sidebar-link mt-auto absolute bottom-4 left-4 right-4">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </aside>
+
+        <button id="mobile-menu-button" class="md:hidden fixed top-4 left-4 z-50 p-2 bg-gray-800 text-white rounded-md">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <main id="main-content" class="main-content flex-1 p-6 md:p-10 overflow-y-auto">
+            <section id="dashboard-section" class="admin-section">
+                <h2 class="text-3xl font-semibold text-gray-800 mb-6">Dashboard</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">Total Users</h3>
+                        <p class="text-3xl font-bold text-blue-600" id="total-users-stat">0</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">Total Clothing Items</h3>
+                        <p class="text-3xl font-bold text-green-600" id="total-items-stat">0</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">Items in Gallery (Avg)</h3>
+                        <p class="text-3xl font-bold text-purple-600" id="avg-gallery-stat">0</p> </div>
+                </div>
+            </section>
+
+            <section id="users-section" class="admin-section hidden">
+                <h2 class="text-3xl font-semibold text-gray-800 mb-6">User Management</h2>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="mb-4 flex justify-between items-center">
+                        <input type="text" id="user-search" placeholder="Search users..." class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full md:w-1/3">
+                        </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Registered On</th>
+                                    <th>Password Status</th> <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="user-table-body">
+                                </tbody>
+                        </table>
+                    </div>
+                     <p id="no-users-message" class="text-center text-gray-500 py-4 hidden">No users found.</p>
+                </div>
+            </section>
+
+            <section id="clothing-section" class="admin-section hidden">
+                <h2 class="text-3xl font-semibold text-gray-800 mb-6">Clothing Item Management</h2>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="mb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <input type="text" id="clothing-search" placeholder="Search items..." class="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-1/3">
+                        <button id="add-clothing-item-btn" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded-lg shadow transition duration-150 w-full sm:w-auto">
+                            <i class="fas fa-plus mr-2"></i>Add New Item
+                        </button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full bg-white">
+                            <thead>
+                                <tr>
+                                    <th>Preview</th>
+                                    <th>Name</th>
+                                    <th>Category</th>
+                                    <th>Gender</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clothing-table-body">
+                                </tbody>
+                        </table>
+                    </div>
+                    <p id="no-clothing-message" class="text-center text-gray-500 py-4 hidden">No clothing items found.</p>
+                </div>
+            </section>
+
+            <section id="settings-section" class="admin-section hidden">
+                <h2 class="text-3xl font-semibold text-gray-800 mb-6">Settings</h2>
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <h3 class="text-xl font-semibold text-gray-700 mb-3">Security & Password Policy</h3>
+                    <p class="text-gray-600 mb-4">
+                        In a real application, this section would allow configuration of password strength requirements,
+                        multi-factor authentication (MFA) settings, and other security parameters.
+                        All password storage and encryption is handled server-side using strong, salted hashing algorithms.
+                    </p>
+                    <button class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow">
+                        Configure Password Policy (Simulated)
+                    </button>
+
+                    <div class="mt-8">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-3">Size Chart Management (Conceptual)</h3>
+                        <button class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow">Edit Size Chart</button>
+                        <p class="text-sm text-gray-500 mt-2">This would open a modal or new page to edit size parameters (S, M, L, XL criteria).</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="clothing-item-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" id="close-clothing-modal">&times;</span>
+            <h3 id="modal-title" class="text-2xl font-semibold text-gray-800 mb-6">Add New Clothing Item</h3>
+            <form id="clothing-item-form">
+                <input type="hidden" id="clothing-item-id">
+                <div class="mb-4">
+                    <label for="item-name" class="block text-sm font-medium text-gray-700 mb-1">Item Name</label>
+                    <input type="text" id="item-name" name="itemName" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                <div class="mb-4">
+                    <label for="item-category" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                    <select id="item-category" name="itemCategory" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                        <option value="Tops">Tops</option>
+                        <option value="Bottoms">Bottoms</option>
+                        <option value="One Piece">One Piece</option>
+                        <option value="Outerwear">Outerwear</option>
+                        <option value="Accessories">Accessories</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <label for="item-gender" class="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+                    <select id="item-gender" name="itemGender" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                        <option value="unisex">Unisex</option>
+                        <option value="female">Female</option>
+                        <option value="male">Male</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label for="item-main-image" class="block text-sm font-medium text-gray-700 mb-1">Main Display Image</label>
+                        <input type="file" id="item-main-image" name="itemMainImage" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        <img id="main-image-preview" src="https://placehold.co/100x100/e2e8f0/cbd5e0?text=Main" alt="Main Preview" class="mt-2 h-24 w-24 object-cover rounded-md border">
+                    </div>
+                     <div>
+                        <label for="item-tryon-female" class="block text-sm font-medium text-gray-700 mb-1">Try-On (Default Female)</label>
+                        <input type="file" id="item-tryon-female" name="itemTryonFemale" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100">
+                        <img id="tryon-female-preview" src="https://placehold.co/100x100/fbcfe8/f472b6?text=F-Default" alt="Try-On Female Preview" class="mt-2 h-24 w-24 object-cover rounded-md border">
+                    </div>
+                     <div>
+                        <label for="item-tryon-male" class="block text-sm font-medium text-gray-700 mb-1">Try-On (Default Male)</label>
+                        <input type="file" id="item-tryon-male" name="itemTryonMale" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100">
+                        <img id="tryon-male-preview" src="https://placehold.co/100x100/bae6fd/38bdf8?text=M-Default" alt="Try-On Male Preview" class="mt-2 h-24 w-24 object-cover rounded-md border">
+                    </div>
+                     <div>
+                        <label for="item-tryon-uploaded-female" class="block text-sm font-medium text-gray-700 mb-1">Try-On (Uploaded Female)</label>
+                        <input type="file" id="item-tryon-uploaded-female" name="itemTryonUploadedFemale" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100">
+                        <img id="tryon-uploaded-female-preview" src="https://placehold.co/100x100/ede9fe/a78bfa?text=F-Upload" alt="Try-On Uploaded Female Preview" class="mt-2 h-24 w-24 object-cover rounded-md border">
+                    </div>
+                     <div>
+                        <label for="item-tryon-uploaded-male" class="block text-sm font-medium text-gray-700 mb-1">Try-On (Uploaded Male)</label>
+                        <input type="file" id="item-tryon-uploaded-male" name="itemTryonUploadedMale" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                        <img id="tryon-uploaded-male-preview" src="https://placehold.co/100x100/e0e7ff/818cf8?text=M-Upload" alt="Try-On Uploaded Male Preview" class="mt-2 h-24 w-24 object-cover rounded-md border">
+                    </div>
+                </div>
+                <p class="text-xs text-gray-500 mb-4">Note: Image uploads are simulated. In a real application, these would be uploaded to a server.</p>
+
+                <div class="flex justify-end space-x-3">
+                    <button type="button" id="cancel-clothing-form" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow transition duration-150">Cancel</button>
+                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg shadow transition duration-150">Save Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="user-detail-modal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" id="close-user-detail-modal">&times;</span>
+            <h3 class="text-2xl font-semibold text-gray-800 mb-6">User Details</h3>
+            <div id="user-detail-content" class="space-y-2">
+                <p><strong>Name:</strong> <span id="detail-user-name"></span></p>
+                <p><strong>Email:</strong> <span id="detail-user-email"></span></p>
+                <p><strong>Registered:</strong> <span id="detail-user-registered"></span></p>
+                <p><strong>Password Last Changed:</strong> <span id="detail-user-password-changed"></span></p>
+                <p class="mt-4 text-sm text-gray-600">Further details like gallery count, uploaded model status, etc., would appear here.</p>
+            </div>
+             <div class="mt-6 flex justify-end">
+                <button type="button" id="close-user-detail-modal-btn" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow">Close</button>
+            </div>
+        </div>
+    </div>
+
+
+<script>
+    // Mock data - in a real app, this would come from a backend
+    // Passwords are NEVER stored or handled client-side like this.
+    // This is purely for front-end simulation.
+    let mockUsers = [
+        { id: 1, name: 'Alice Wonderland', email: 'alice@example.com', registeredOn: '2024-01-15', passwordLastChanged: '2024-03-01' },
+        { id: 2, name: 'Bob The Builder', email: 'bob@example.com', registeredOn: '2024-02-20', passwordLastChanged: '2024-02-20' },
+        { id: 3, name: 'Charlie Brown', email: 'charlie@example.com', registeredOn: '2024-03-10', passwordLastChanged: '2024-04-15' },
+        { id: 4, name: 'Diana Prince', email: 'diana@example.com', registeredOn: '2023-12-05', passwordLastChanged: '2024-01-10' },
+        { id: 5, name: 'Edward Scissorhands', email: 'edward@example.com', registeredOn: '2024-04-01', passwordLastChanged: '2024-04-01' }
+    ];
+
+    let mockClothingItems = [
+        { id: 'item_tops_1', name: 'Green short-sleeve shirt', category: 'Tops', gender: 'unisex', mainImage: 'https://placehold.co/60x60/34d399/ffffff?text=Top1', tryOnImages: {} },
+        { id: 'item_bottoms_1', name: 'Dark blue jeans', category: 'Bottoms', gender: 'unisex', mainImage: 'https://placehold.co/60x60/60a5fa/ffffff?text=Btm1', tryOnImages: {} },
+        { id: 'item_dress_1', name: 'Black dress/Business casual', category: 'One Piece', gender: 'female', mainImage: 'https://placehold.co/60x60/f472b6/ffffff?text=Drs1', tryOnImages: {} },
+    ];
+
+    /*
+    IMPORTANT NOTE ON PASSWORD SECURITY:
+    The following JavaScript is for front-end demonstration purposes ONLY.
+    - NEVER store plain text passwords in client-side code or mock data.
+    - NEVER implement actual password encryption/decryption logic in client-side JavaScript.
+      This can be easily reverse-engineered.
+    - ALWAYS handle password hashing and secure storage on the SERVER-SIDE using strong,
+      industry-standard algorithms (e.g., Argon2, bcrypt, scrypt) with unique salts per user.
+    - ALWAYS transmit passwords from client to server over HTTPS.
+    - Client-side hashing (e.g., using SHA-256) can be an *additional* layer before sending
+      to the server, but it DOES NOT replace server-side security.
+
+    If you were to have a "Create User" or "Change Password" form:
+    1. User enters password in the form.
+    2. (Optional, but good practice) Client-side JavaScript could hash this password using a
+       strong hashing library (e.g., a Web Crypto API wrapper or a library like sjcl.js for SHA256).
+       Example (conceptual, needs a library for actual hashing):
+       async function hashPassword(password) {
+           // This is a very simplified example. Real hashing is more complex.
+           // const encoder = new TextEncoder();
+           // const data = encoder.encode(password);
+           // const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+           // const hashArray = Array.from(new Uint8Array(hashBuffer));
+           // const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+           // return hashHex;
+           return "hashed_" + password; // Placeholder for actual hashing
+       }
+       // const hashedPassword = await hashPassword(userInputPassword);
+       // Send `hashedPassword` to the server, NOT `userInputPassword`.
+    3. The server receives the (potentially client-side hashed) password.
+    4. The server then applies its own strong, salted hashing algorithm before storing it.
+    */
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+        const adminSections = document.querySelectorAll('.admin-section');
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const sidebar = document.getElementById('sidebar');
+        const mainContent = document.getElementById('main-content');
+
+        // Sidebar navigation
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                if (link.id === 'admin-logout') {
+                    e.preventDefault();
+                    if (confirm('Are you sure you want to log out?')) {
+                        // Simulate logout
+                        alert('Logged out (simulation). You would be redirected to a login page.');
+                        // In a real app: window.location.href = '/admin/login.html';
+                    }
+                    return;
+                }
+
+                e.preventDefault();
+                const targetId = link.dataset.target;
+
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+
+                adminSections.forEach(section => {
+                    section.classList.toggle('hidden', section.id !== targetId);
+                });
+
+                if (window.innerWidth < 768 && sidebar.classList.contains('open')) {
+                    sidebar.classList.remove('open');
+                    mainContent.classList.remove('sidebar-open');
+                    mobileMenuButton.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            });
+        });
+        
+        // Mobile menu toggle
+        mobileMenuButton.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+            mainContent.classList.toggle('sidebar-open');
+            mobileMenuButton.innerHTML = sidebar.classList.contains('open') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+
+        // User Management
+        const userTableBody = document.getElementById('user-table-body');
+        const userSearchInput = document.getElementById('user-search');
+        const noUsersMessage = document.getElementById('no-users-message');
+        const userDetailModal = document.getElementById('user-detail-modal');
+        const closeUserDetailModal = document.getElementById('close-user-detail-modal');
+        const closeUserDetailModalBtn = document.getElementById('close-user-detail-modal-btn');
+        const userDetailContent = {
+            name: document.getElementById('detail-user-name'),
+            email: document.getElementById('detail-user-email'),
+            registered: document.getElementById('detail-user-registered'),
+            passwordChanged: document.getElementById('detail-user-password-changed') // New detail field
+        };
+
+        function renderUsers(users = mockUsers) {
+            userTableBody.innerHTML = '';
+            noUsersMessage.classList.toggle('hidden', users.length > 0);
+
+            if (users.length === 0) return;
+
+            users.forEach(user => {
+                const row = userTableBody.insertRow();
+                row.innerHTML = `
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>${user.registeredOn}</td>
+                    <td>${user.passwordLastChanged ? `Changed: ${user.passwordLastChanged}` : 'N/A'}</td> <td class="space-x-1 sm:space-x-2">
+                        <button class="view-user-btn text-blue-500 hover:text-blue-700 p-1" data-id="${user.id}" title="View Details"><i class="fas fa-eye"></i></button>
+                        <button class="edit-user-btn text-yellow-500 hover:text-yellow-700 p-1" data-id="${user.id}" title="Edit User (Simulated)"><i class="fas fa-edit"></i></button>
+                        <button class="reset-password-btn text-purple-500 hover:text-purple-700 p-1" data-id="${user.id}" title="Reset Password (Simulated)"><i class="fas fa-key"></i></button>
+                        <button class="delete-user-btn text-red-500 hover:text-red-700 p-1" data-id="${user.id}" title="Delete User"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+            });
+            addEventListenersToUserButtons();
+        }
+        
+        function addEventListenersToUserButtons() {
+            document.querySelectorAll('.view-user-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const userId = parseInt(e.currentTarget.dataset.id);
+                    const user = mockUsers.find(u => u.id === userId);
+                    if (user) {
+                        userDetailContent.name.textContent = user.name;
+                        userDetailContent.email.textContent = user.email;
+                        userDetailContent.registered.textContent = user.registeredOn;
+                        userDetailContent.passwordChanged.textContent = user.passwordLastChanged || 'Not available'; // Show password change date
+                        userDetailModal.style.display = 'block';
+                    }
+                });
+            });
+            document.querySelectorAll('.edit-user-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    alert(`Simulating edit for user ID: ${e.currentTarget.dataset.id}. This would open an edit form where password fields should be handled securely (e.g., "leave blank to keep current password").`);
+                });
+            });
+             document.querySelectorAll('.reset-password-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const userId = parseInt(e.currentTarget.dataset.id);
+                    const user = mockUsers.find(u => u.id === userId);
+                    if (user && confirm(`Are you sure you want to trigger a password reset for ${user.name}? (Simulation)`)) {
+                        alert(`Password reset process initiated for ${user.name} (email: ${user.email}). In a real app, a secure link would be sent to the user.`);
+                        // Here, you might update the mock data for demonstration
+                        user.passwordLastChanged = new Date().toISOString().split('T')[0]; // Update last changed date
+                        renderUsers(); // Re-render to show updated status
+                    }
+                });
+            });
+            document.querySelectorAll('.delete-user-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const userId = parseInt(e.currentTarget.dataset.id);
+                    if (confirm(`Are you sure you want to delete user ID ${userId}? This is a simulation.`)) {
+                        mockUsers = mockUsers.filter(u => u.id !== userId);
+                        renderUsers();
+                        alert(`User ID ${userId} "deleted".`);
+                        updateDashboardStats();
+                    }
+                });
+            });
+        }
+
+        if (closeUserDetailModal) {
+            closeUserDetailModal.onclick = () => userDetailModal.style.display = 'none';
+        }
+        if (closeUserDetailModalBtn) {
+            closeUserDetailModalBtn.onclick = () => userDetailModal.style.display = 'none';
+        }
+
+        userSearchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredUsers = mockUsers.filter(user => 
+                user.name.toLowerCase().includes(searchTerm) ||
+                user.email.toLowerCase().includes(searchTerm)
+            );
+            renderUsers(filteredUsers);
+        });
+
+        // Clothing Item Management
+        const clothingTableBody = document.getElementById('clothing-table-body');
+        const clothingSearchInput = document.getElementById('clothing-search');
+        const noClothingMessage = document.getElementById('no-clothing-message');
+        const addClothingItemBtn = document.getElementById('add-clothing-item-btn');
+        const clothingItemModal = document.getElementById('clothing-item-modal');
+        const closeClothingModal = document.getElementById('close-clothing-modal');
+        const cancelClothingFormBtn = document.getElementById('cancel-clothing-form');
+        const clothingItemForm = document.getElementById('clothing-item-form');
+        const modalTitle = document.getElementById('modal-title');
+
+        const imagePreviewFields = {
+            'item-main-image': 'main-image-preview',
+            'item-tryon-female': 'tryon-female-preview',
+            'item-tryon-male': 'tryon-male-preview',
+            'item-tryon-uploaded-female': 'tryon-uploaded-female-preview',
+            'item-tryon-uploaded-male': 'tryon-uploaded-male-preview'
+        };
+
+        function resetImagePreviews() {
+            for (const inputId in imagePreviewFields) {
+                const previewEl = document.getElementById(imagePreviewFields[inputId]);
+                if (previewEl) {
+                    let placeholderText = "Preview";
+                    if (inputId === 'item-main-image') placeholderText = "Main";
+                    else if (inputId === 'item-tryon-female') placeholderText = "F-Default";
+                    else if (inputId === 'item-tryon-male') placeholderText = "M-Default";
+                    else if (inputId === 'item-tryon-uploaded-female') placeholderText = "F-Upload";
+                    else if (inputId === 'item-tryon-uploaded-male') placeholderText = "M-Upload";
+                    previewEl.src = `https://placehold.co/100x100/e2e8f0/cbd5e0?text=${placeholderText}`;
+                }
+            }
+        }
+        
+        for (const inputId in imagePreviewFields) {
+            const inputEl = document.getElementById(inputId);
+            const previewEl = document.getElementById(imagePreviewFields[inputId]);
+            if (inputEl && previewEl) {
+                inputEl.addEventListener('change', function(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) { previewEl.src = e.target.result; }
+                        reader.readAsDataURL(file);
+                    } else {
+                        let placeholderText = "Preview"; // Default placeholder
+                        if (inputId === 'item-main-image') placeholderText = "Main";
+                        else if (inputId === 'item-tryon-female') placeholderText = "F-Default";
+                        else if (inputId === 'item-tryon-male') placeholderText = "M-Default";
+                        else if (inputId === 'item-tryon-uploaded-female') placeholderText = "F-Upload";
+                        else if (inputId === 'item-tryon-uploaded-male') placeholderText = "M-Upload";
+                        previewEl.src = `https://placehold.co/100x100/e2e8f0/cbd5e0?text=${placeholderText}`;
+                    }
+                });
+            }
+        }
+
+        function renderClothingItems(items = mockClothingItems) {
+            clothingTableBody.innerHTML = '';
+            noClothingMessage.classList.toggle('hidden', items.length > 0);
+            if (items.length === 0) return;
+
+            items.forEach(item => {
+                const row = clothingTableBody.insertRow();
+                row.innerHTML = `
+                    <td><img src="${item.mainImage || 'https://placehold.co/60x60/cccccc/999999?text=N/A'}" alt="${item.name}" class="h-12 w-12 object-cover rounded-md"></td>
+                    <td>${item.name}</td>
+                    <td>${item.category}</td>
+                    <td>${item.gender.charAt(0).toUpperCase() + item.gender.slice(1)}</td>
+                    <td class="space-x-1 sm:space-x-2">
+                        <button class="edit-clothing-btn text-yellow-500 hover:text-yellow-700 p-1" data-id="${item.id}" title="Edit Item"><i class="fas fa-edit"></i></button>
+                        <button class="delete-clothing-btn text-red-500 hover:text-red-700 p-1" data-id="${item.id}" title="Delete Item"><i class="fas fa-trash"></i></button>
+                    </td>
+                `;
+            });
+            addEventListenersToClothingButtons();
+        }
+        
+        function addEventListenersToClothingButtons() {
+            document.querySelectorAll('.edit-clothing-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const itemId = e.currentTarget.dataset.id;
+                    const item = mockClothingItems.find(i => i.id === itemId);
+                    if (item) {
+                        modalTitle.textContent = 'Edit Clothing Item';
+                        document.getElementById('clothing-item-id').value = item.id;
+                        document.getElementById('item-name').value = item.name;
+                        document.getElementById('item-category').value = item.category;
+                        document.getElementById('item-gender').value = item.gender;
+                        document.getElementById('main-image-preview').src = item.mainImage || 'https://placehold.co/100x100/e2e8f0/cbd5e0?text=Main';
+                        // Reset other image previews or load them if URLs are stored in item.tryOnImages
+                        document.getElementById('tryon-female-preview').src = item.tryOnImages?.femaleDefault || 'https://placehold.co/100x100/fbcfe8/f472b6?text=F-Default';
+                        document.getElementById('tryon-male-preview').src = item.tryOnImages?.maleDefault || 'https://placehold.co/100x100/bae6fd/38bdf8?text=M-Default';
+                        document.getElementById('tryon-uploaded-female-preview').src = item.tryOnImages?.femaleUploaded || 'https://placehold.co/100x100/ede9fe/a78bfa?text=F-Upload';
+                        document.getElementById('tryon-uploaded-male-preview').src = item.tryOnImages?.maleUploaded || 'https://placehold.co/100x100/e0e7ff/818cf8?text=M-Upload';
+                        // Clear file inputs as we are not pre-filling them
+                        document.getElementById('item-main-image').value = '';
+                        document.getElementById('item-tryon-female').value = '';
+                        document.getElementById('item-tryon-male').value = '';
+                        document.getElementById('item-tryon-uploaded-female').value = '';
+                        document.getElementById('item-tryon-uploaded-male').value = '';
+                        clothingItemModal.style.display = 'block';
+                    }
+                });
+            });
+
+            document.querySelectorAll('.delete-clothing-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const itemId = e.currentTarget.dataset.id;
+                    const item = mockClothingItems.find(i=>i.id === itemId);
+                    if (confirm(`Are you sure you want to delete item "${item?.name || itemId}"? This is a simulation.`)) {
+                        mockClothingItems = mockClothingItems.filter(i => i.id !== itemId);
+                        renderClothingItems();
+                        alert(`Item "${item?.name || itemId}" "deleted".`);
+                        updateDashboardStats();
+                    }
+                });
+            });
+        }
+        
+        addClothingItemBtn.addEventListener('click', () => {
+            modalTitle.textContent = 'Add New Clothing Item';
+            clothingItemForm.reset(); // Resets form fields
+            document.getElementById('clothing-item-id').value = ''; 
+            resetImagePreviews(); // Resets image previews to placeholders
+            clothingItemModal.style.display = 'block';
+        });
+
+        if (closeClothingModal) closeClothingModal.onclick = () => clothingItemModal.style.display = 'none';
+        if (cancelClothingFormBtn) cancelClothingFormBtn.onclick = () => clothingItemModal.style.display = 'none';
+
+        clothingItemForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('clothing-item-id').value;
+            const name = document.getElementById('item-name').value;
+            const category = document.getElementById('item-category').value;
+            const gender = document.getElementById('item-gender').value;
+            
+            // Simulate image URL storage. In a real app, files would be uploaded and URLs returned by the server.
+            const mainImage = document.getElementById('main-image-preview').src.startsWith('data:image') ? 'https://placehold.co/60x60/cccccc/ffffff?text=Uploaded' : document.getElementById('main-image-preview').src;
+            // Similarly for other images if they were being saved.
+            // For this simulation, we'll just update/add the main image.
+
+            const itemData = {
+                name,
+                category,
+                gender,
+                mainImage, // This would be a URL from server in real app
+                tryOnImages: { // Store preview URLs or server URLs
+                    femaleDefault: document.getElementById('tryon-female-preview').src,
+                    maleDefault: document.getElementById('tryon-male-preview').src,
+                    femaleUploaded: document.getElementById('tryon-uploaded-female-preview').src,
+                    maleUploaded: document.getElementById('tryon-uploaded-male-preview').src,
+                }
+            };
+
+            if (id) { // Editing existing
+                const itemIndex = mockClothingItems.findIndex(i => i.id === id);
+                if (itemIndex > -1) {
+                    mockClothingItems[itemIndex] = { ...mockClothingItems[itemIndex], ...itemData };
+                    alert('Item updated (simulated).');
+                }
+            } else { // Adding new
+                const newItem = {
+                    id: `item_custom_${Date.now()}`, // Simple unique ID
+                    ...itemData
+                };
+                mockClothingItems.push(newItem);
+                alert('Item added (simulated).');
+            }
+            renderClothingItems();
+            updateDashboardStats();
+            clothingItemModal.style.display = 'none';
+        });
+
+        clothingSearchInput.addEventListener('input', (e) => {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredItems = mockClothingItems.filter(item => 
+                item.name.toLowerCase().includes(searchTerm) ||
+                item.category.toLowerCase().includes(searchTerm)
+            );
+            renderClothingItems(filteredItems);
+        });
+
+        // Dashboard Stats Update
+        function updateDashboardStats() {
+            document.getElementById('total-users-stat').textContent = mockUsers.length;
+            document.getElementById('total-items-stat').textContent = mockClothingItems.length;
+            // Avg gallery items is a mock value, not dynamically calculated here
+            document.getElementById('avg-gallery-stat').textContent = mockUsers.length > 0 ? (mockClothingItems.length / mockUsers.length).toFixed(1) : 0; // Example calculation
+        }
+
+        // Window event for closing modals on outside click
+        window.onclick = function(event) {
+            if (event.target == clothingItemModal) {
+                clothingItemModal.style.display = "none";
+            }
+            if (event.target == userDetailModal) {
+                userDetailModal.style.display = "none";
+            }
+        }
+
+        // Initial Renders
+        renderUsers();
+        renderClothingItems();
+        updateDashboardStats();
+    });
+</script>
+</body>
+</html>

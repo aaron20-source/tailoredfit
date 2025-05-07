@@ -1,0 +1,632 @@
+/* style.css */
+/* Merged styles for StyleMe Virtual App */
+
+/* --- Google Fonts --- */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+@import url('https://rsms.me/inter/inter.css'); /* Inter font */
+@import url('https://fonts.googleapis.com/css2?family=Pacifico&display=swap'); /* Pacifico font */
+
+
+/* --- Global Styles & Resets --- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Montserrat', sans-serif; /* Default auth font */
+    background-color: #b9ad9f;
+    background: linear-gradient(to right, #b9ad9f, #cecece);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    min-height: 100vh;
+    color: #333;
+}
+
+/* App pages styling */
+body#account-page, body#studio-page, body#gallery-page {
+    font-family: 'Inter', sans-serif; /* App font */
+    justify-content: flex-start;
+    background: #f3f4f6; /* App background */
+}
+
+/* --- Header/Logo Section Styling --- */
+.w-full.text-center.py-4 {
+    /* Ensure the header is at the top for separate pages */
+    width: 100%;
+    text-align: center;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.font-['Pacifico'] {
+    font-family: 'Pacifico', cursive;
+}
+
+.text-4xl { font-size: 2.25rem; } /* Tailwind text-4xl */
+.text-[#4a332e] { color: #4a332e; } /* Custom brand color */
+.hover:text-[#6d4c41]:hover { color: #6d4c41; } /* Hover color */
+.transition-colors { transition-property: color, background-color, border-color, text-decoration-color, fill, stroke; } /* Tailwind transition-colors */
+.duration-200 { transition-duration: 200ms; } /* Tailwind duration-200 */
+
+
+/* --- Styles for Login/Register Page (Sliding Panel) --- */
+
+.container {
+    background-color: #FCFBF4; /* Background from original style.css */
+    border-radius: 30px; /* Border radius from original style.css */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35); /* Shadow from original style.css */
+    position: relative; /* Keep relative for positioning form-container */
+    overflow: hidden;
+    width: 768px; /* Original width */
+    max-width: 100%; /* Ensure responsiveness */
+    min-height: 480px; /* Original min-height */
+    margin: 20px auto; /* Center the container and add margin */
+}
+
+.form-container {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    transition: all 0.6s ease-in-out;
+    padding: 40px;
+    background-color: #FCFBF4;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.sign-up {
+    left: 0;
+    width: 50%;
+    opacity: 0;
+    z-index: 1;
+}
+
+.sign-in {
+    left: 0;
+    width: 50%;
+    z-index: 2;
+}
+
+/* Styles when container is active (toggled to Sign Up) */
+.container.active .sign-in {
+    transform: translateX(100%);
+}
+
+.container.active .sign-up {
+    transform: translateX(100%);
+    opacity: 1;
+    z-index: 5;
+    animation: move 0.6s;
+}
+
+@keyframes move {
+    0%, 49.99% {
+        opacity: 0;
+        z-index: 1;
+    }
+    50%, 100% {
+        opacity: 1;
+        z-index: 5;
+    }
+}
+
+.social-icons { margin: 20px 0; }
+.social-icons a {
+    border: 1px solid #ccc;
+    border-radius: 20%; /* Adjusted from 50% for a slightly different look */
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 5px;
+    width: 40px;
+    height: 40px;
+    text-decoration: none;
+    color: #333;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.social-icons a:hover { background-color: #eee; color: #4a332e; }
+
+
+/* Toggle/Overlay Container */
+.toggle-container {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 50%;
+    height: 100%;
+    overflow: hidden;
+    transition: all 0.6s ease-in-out;
+    border-radius: 150px 0 0 100px; /* Adjusted border radius */
+    z-index: 1000;
+}
+
+.container.active .toggle-container {
+    transform: translateX(-100%);
+    border-radius: 0 150px 100px 0; /* Adjusted border radius */
+}
+
+.toggle {
+    background-color: #4a332e;
+    height: 100%;
+    background: linear-gradient(to right, #4a332e, #6d4c41);
+    color: #fff;
+    position: relative;
+    left: -100%;
+    height: 100%;
+    width: 200%;
+    transform: translateX(0);
+    transition: all 0.6s ease-in-out;
+}
+
+.container.active .toggle {
+    transform: translateX(50%);
+}
+
+.toggle-panel {
+    position: absolute;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 30px;
+    text-align: center;
+    top: 0;
+    transform: translateX(0);
+    transition: all 0.6s ease-in-out;
+}
+
+.toggle-left {
+    transform: translateX(-200%);
+}
+
+.container.active .toggle-left {
+    transform: translateX(0);
+}
+
+.toggle-right {
+    right: 0;
+    transform: translateX(0);
+}
+
+.container.active .toggle-right {
+    transform: translateX(200%);
+}
+
+/* Image sizes within toggle panels */
+.img-sizes {
+    width: 150px; /* Adjust as needed */
+    height: auto;
+    margin-bottom: 15px;
+    border-radius: 10px; /* Add some border radius to images */
+}
+
+.img-size {
+     width: 150px; /* Adjust as needed */
+    height: auto;
+    margin-bottom: 15px;
+    border-radius: 10px; /* Add some border radius to images */
+}
+
+
+/* --- Form Element Styles --- */
+.container p { font-size: 14px; line-height: 20px; letter-spacing: 0.3px; margin: 15px 0; }
+.container span { font-size: 12px; margin-bottom: 10px; }
+.container a { color: #333; font-size: 13px; text-decoration: none; margin: 10px 0; }
+.container a:hover { text-decoration: underline; }
+
+/* Button styles */
+.container button {
+    background-color: #4a332e;
+    color: #fff;
+    font-size: 12px;
+    padding: 10px 45px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-top: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+.container button:hover:not(:disabled) { background-color: #6d4c41; }
+.container button:disabled { background-color: #9e9e9e; cursor: not-allowed; }
+
+
+/* Form control (input container) styles */
+.form-control {
+    margin-bottom: 5px;
+    padding-bottom: 18px; /* Space for error message */
+    position: relative;
+    width: 80%; /* Adjust width as needed */
+    max-width: 350px; /* Max width for form controls */
+    text-align: left;
+}
+.form-control label { display: block; margin-bottom: 5px; font-size: 13px; font-weight: 600; color: #555; }
+.form-control label.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+.form-control small {
+    visibility: hidden;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    font-size: 11px;
+    color: #e74c3c;
+}
+
+/* Input field styles */
+.container .form-control input {
+    background-color: #eee;
+    border: 1px solid #ddd;
+    margin: 8px 0; /* Adjust margin as needed */
+    padding: 12px 15px;
+    font-size: 14px;
+    border-radius: 8px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.2s ease;
+}
+.container .form-control input:focus { border-color: #4a332e; }
+
+
+/* Validation Icon Styles */
+.form-control i {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+    visibility: hidden; /* Hidden by default */
+    font-size: 14px;
+}
+/* Adjust icon vertical position if label is visible */
+.form-control label:not(.sr-only) + input + i,
+.form-control label:not(.sr-only) + .password-container i {
+    top: 65%; /* Adjust based on input+label height */
+}
+
+
+/* Validation States */
+.form-control.success input { border-color: #2ecc71; }
+.form-control.success i.fa-check-circle, .form-control.success i.validation-icon-check { color: #2ecc71; visibility: visible; }
+.form-control.error input { border-color: #e74c3c; }
+.form-control.error small { visibility: visible; }
+.form-control.error i.fa-exclamation-circle, .form-control.error i.validation-icon-error { color: #e74c3c; visibility: visible; }
+
+
+/* --- Password Toggle Icon --- */
+.password-container { position: relative; width: 100%; /* Ensure it takes full width within form-control */ }
+.password-toggle-icon {
+    /* Position handled by .form-control i */
+    cursor: pointer;
+    color: #6b7280;
+    z-index: 10;
+    visibility: visible !important; /* Always visible */
+    font-size: 16px;
+    right: 15px; /* Adjust position */
+}
+.password-toggle-icon:hover { color: #333; }
+/* Adjust password toggle icon position when validation icons are visible */
+.form-control.success .password-toggle-icon,
+.form-control.error .password-toggle-icon {
+    right: 30px; /* Make space for validation icon */
+}
+
+
+/* --- Social Icons --- */
+.social-icons { margin: 15px 0; }
+.social-icons a {
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 5px;
+    width: 40px;
+    height: 40px;
+    text-decoration: none;
+    color: #333;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+.social-icons a:hover { background-color: #eee; color: #4a332e; }
+
+
+/* --- General Error/Success Message Styles --- */
+.error-message, .success-message {
+    font-size: 0.875rem;
+    margin-top: 0.5rem;
+    margin-bottom: 1rem;
+    width: 80%; /* Match form control width */
+    max-width: 350px; /* Match form control max width */
+    text-align: center;
+}
+.error-message { color: #ef4444; }
+.success-message { color: #16a34a; }
+.error-message.hidden, .success-message.hidden { display: none; }
+
+
+/* --- Styles for Forgot Password Page --- */
+/* Keep existing styles for forgot password if you still use that page */
+.simple-auth-container { background-color: #FCFBF4; padding: 2rem 2.5rem; border-radius: 15px; box-shadow: 0 4고자 12px rgba(0, 0, 0, 0.15); width: 90%; max-width: 450px; text-align: center; margin: 20px auto; }
+.simple-auth-container .auth-title { font-size: 1.75rem; font-weight: 600; color: #333; margin-bottom: 1.5rem; }
+.simple-auth-container .auth-description { font-size: 0.9rem; color: #555; margin-bottom: 1.5rem; }
+.simple-auth-container .form-control { width: 100%; margin-bottom: 1rem; padding-bottom: 18px; }
+.simple-auth-container .form-control label { display: block; text-align: left; margin-bottom: 6px; font-size: 0.85rem; }
+.simple-auth-container .form-control input { background-color: #eee; border: 1px solid #ddd; padding: 10px 15px; font-size: 14px; border-radius: 8px; width: 100%; outline: none; }
+.simple-auth-container .form-control input:focus { border-color: #4a332e; }
+.simple-auth-container .form-control small { text-align: left; }
+.simple-auth-container .password-container .password-toggle-icon { top: 70%; }
+.simple-auth-container .auth-button { background-color: #4a332e; color: #fff; font-size: 0.9rem; padding: 12px 20px; border: none; border-radius: 8px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 1rem; margin-bottom: 1rem; cursor: pointer; width: 100%; transition: background-color 0.2s ease; }
+.simple-auth-container .auth-button:hover { background-color: #6d4c41; }
+.simple-auth-container .auth-button.success { background-color: #2ecc71; }
+.simple-auth-container .auth-button.success:hover { background-color: #27ae60; }
+.simple-auth-container .auth-link { margin-top: 1rem; font-size: 0.85rem; }
+.simple-auth-container .auth-link a { color: #4a332e; font-weight: 600; text-decoration: none; }
+.simple-auth-container .auth-link a:hover { text-decoration: underline; }
+.forgot-section { display: none; } .forgot-section.active { display: block; }
+.auth-footer { margin-top: 2rem; font-size: 0.8rem; color: #555; }
+
+
+/* --- Styles for Header/Footer (App Pages) --- */
+/* Primarily use Tailwind, add base styles if needed */
+#main-header { padding: 1rem 0; font-family: 'Inter', sans-serif; }
+#main-header .container { background-color: transparent; border-radius: 0; box-shadow: none; width: 100%; max-width: 1280px; min-height: auto; margin: 0 auto; padding: 0 1rem; /* Tailwind px-4 */ }
+#main-header h1 { color: #333; }
+#main-header nav a { text-decoration: none; margin-left: 0.5rem; transition: color 0.2s ease; }
+#main-footer { text-align: center; padding: 1rem 0; margin-top: auto; font-size: 0.875rem; font-family: 'Inter', sans-serif; }
+
+/* --- Studio Page Styles --- */
+.mannequin-container-large {
+    min-height: 450px; /* Ensure minimum height */
+    position: relative;
+    overflow: hidden;
+}
+
+.model-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+.model-image.hidden {
+    display: none;
+}
+
+.clothing-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.clothing-overlay.draggable {
+    pointer-events: auto; /* Enable pointer events when draggable */
+    cursor: grab;
+}
+
+.clothing-overlay.dragging {
+    cursor: grabbing;
+    opacity: 0.85;
+}
+
+
+.hidden {
+    display: none;
+}
+
+/* Input range slider track */
+input[type=range]::-webkit-slider-runnable-track {
+    height: 0.5rem;
+    background: #e5e7eb;
+    border-radius: 0.25rem;
+}
+
+input[type=range]::-moz-range-track {
+    height: 0.5rem;
+    background: #e5e7eb;
+    border-radius: 0.25rem;
+}
+
+/* Input range slider thumb */
+input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 1rem;
+    height: 1rem;
+    background: #4a332e;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-top: -0.25rem; /* Center thumb on track */
+}
+
+input[type=range]::-moz-range-thumb {
+    width: 1rem;
+    height: 1rem;
+    background: #4a332e;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+}
+
+/* --- Styles for Gallery Page --- */
+.gallery-item img { display: block; width: 100%; height: 150px; object-fit: contain; background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.375rem; }
+.gallery-item .delete-item-btn { /* Example positioning */ position: absolute; top: 5px; right: 5px; }
+
+/* --- Skin Tone/Model Selection --- */
+.skin-tone-swatch { width: 1.5rem; height: 1.5rem; border-radius: 9999px; border: 2px solid transparent; cursor: pointer; transition: transform 0.1s ease-in-out, box-shadow 0.1s ease-in-out; }
+.skin-tone-swatch:hover { transform: scale(1.1); }
+.skin-tone-swatch.selected { border-color: #4f46e5; box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.5); transform: scale(1.1); }
+.model-select-btn.selected { font-weight: 600; /* Apply border/ring using JS+Tailwind */ }
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 768px) {
+    /* Adjust .container for smaller screens */
+    .container {
+         min-height: 600px; /* Keep original min-height for sliding effect */
+         border-radius: 20px; /* Adjust border radius */
+         width: 95%; /* Ensure width is responsive */
+         margin: 20px auto; /* Center with margin */
+    }
+    /* Adjust form-container padding for smaller screens */
+     .form-container {
+         padding: 30px 20px; /* Adjust padding */
+     }
+     /* Adjust form control width for smaller screens */
+     .form-control {
+         width: 95%; /* Adjust form control width */
+     }
+
+    /* Ensure toggle container is visible on smaller screens */
+    .toggle-container {
+        /* Remove or override display: none */
+        display: block; /* Ensure it's block or flex as needed by its layout */
+        /* Keep original positioning and transitions */
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 50%;
+        height: 100%;
+        overflow: hidden;
+        transition: all 0.6s ease-in-out;
+        border-radius: 150px 0 0 100px;
+        z-index: 1000;
+    }
+
+    /* Adjust toggle panel padding for smaller screens */
+    .toggle-panel {
+        padding: 0 15px; /* Reduce padding */
+    }
+
+    /* Adjust image sizes in toggle panels for smaller screens */
+    .img-sizes, .img-size {
+        width: 100px; /* Reduce image size */
+        margin-bottom: 10px;
+    }
+
+    #main-header nav { /* Example: Adjust or hide nav for mobile */ }
+}
+
+/* General Styles */
+body {
+    background-color: #F5F1EA; /* Secondary color background */
+    color: #4B3F32; /* Primary text color */
+    font-family: 'Inter', sans-serif; /* Explicitly set Inter */
+    margin: 0;
+    padding: 0;
+}
+
+/* Header */
+header {
+    background-color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 1rem; /* Adjusting padding for header */
+}
+
+/* Main content area */
+.main-content {
+    padding: 2rem; /* Increased padding for more space */
+}
+
+/* Grid Layout for larger screens */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid */
+    gap: 1.5rem; /* Space between grid items */
+}
+
+/* Outfit Card Transition */
+.outfit-card {
+    transition: transform 0.3s ease;
+}
+
+.outfit-card:hover {
+    transform: translateY(-5px); /* Lifts the card on hover */
+}
+
+/* Responsive Classes for Buttons */
+.model-select-btn {
+    padding: 0.5rem 1rem; /* Responsive padding */
+}
+
+/* Styling for clothing items */
+.clothing-item {
+    border: 1px solid #E5DED5; /* Secondary color border */
+    border-radius: 8px; 
+    background-color: #E5DED5; 
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Style for uploaded model preview */
+.uploaded-model-preview {
+    border-radius: 50%;
+    border: 2px solid #A78B71; /* Primary color border */
+    width: 50px;
+    height: 50px;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column; /* Stack header items on smaller screens */
+        align-items: start;
+    }
+
+    .main-content {
+        padding: 1rem; /* Less padding on smaller screens */
+    }
+
+    .model-select-btn {
+        font-size: 0.875rem; /* Slightly smaller text */
+        padding: 0.5rem; /* Smaller padding */
+    }
+
+    .clothing-item img {
+        height: 80px; /* Smaller images on mobile */
+    }
+
+    .error-message, .success-message {
+        font-size: 0.75rem; /* Smaller text on mobile */
+    }
+}
+
+@media (max-width: 480px) {
+    .uploaded-model-preview {
+        width: 40px; /* Even smaller model previews */
+        height: 40px;
+    }
+
+    #size-recommendation-display {
+        font-size: 0.75rem; /* Smaller text */
+        padding: 0.5rem; /* Less padding */
+    }
+    
+    /* Style for the clothing category filter on small screens */
+    #clothing-category-filter {
+        padding: 0.5rem; /* Adjust padding */
+        font-size: 0.85rem; /* Smaller font size */
+    }
+
+    /* Resize grid item text */
+    .clothing-item p {
+        font-size: 0.7rem; /* Smaller font size for item text */
+    }
+}

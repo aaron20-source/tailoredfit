@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title> TRY ON - Reset Password</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<script>
+    // Basic Tailwind config matching login.html
+    tailwind.config={
+        theme:{
+            extend:{
+                colors:{primary:'#c8a27a',secondary:'#8a7a63'},
+                borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}
+            }
+        }
+    }
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+<style>
+    /* Styles matching login.html for consistency */
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+    .form-container {
+        background-color: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+    }
+    .form-input:focus {
+        border-color: #c8a27a;
+        box-shadow: 0 0 0 2px rgba(200, 162, 122, 0.2);
+        outline: none;
+    }
+    /* Styles for validation feedback (copied from login.html styles) */
+    .mb-5.error .form-input,
+    .form-control.error input {
+        border-color: #ef4444; /* Red 500 */
+        padding-right: 2.5rem; /* Make space for icon */
+    }
+    .mb-5.success .form-input,
+    .form-control.success input {
+        border-color: #22c55e; /* Green 500 */
+         padding-right: 2.5rem; /* Make space for icon */
+    }
+    .mb-5 .validation-icon,
+    .form-control .validation-icon {
+        position: absolute;
+        top: 50%;
+        right: 0.75rem;
+        transform: translateY(-50%);
+        pointer-events: none;
+        font-size: 1rem;
+    }
+    .mb-5.error .validation-icon-error,
+    .form-control.error .validation-icon-error {
+        color: #ef4444; display: block;
+    }
+    .mb-5.success .validation-icon-check,
+    .form-control.success .validation-icon-check {
+        color: #22c55e; display: block;
+    }
+    .mb-5 .validation-icon-check, .mb-5 .validation-icon-error,
+    .form-control .validation-icon-check, .form-control .validation-icon-error {
+        display: none;
+    }
+    .mb-5 small, .form-control small {
+        color: #ef4444; font-size: 0.75rem; margin-top: 0.25rem; display: block;
+    }
+    .message-area {
+        text-align: center; margin-top: 1rem; font-size: 0.875rem; min-height: 1.5rem;
+    }
+    .message-area.text-red-600 { color: #dc2626; }
+    .message-area.text-green-600 { color: #16a34a; }
+    .hidden { display: none; }
+</style>
+</head>
+<body id="forgot-password-page" class="min-h-screen flex items-center justify-center bg-gray-50" style="background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://readdy.ai/api/search-image?query=elegant%2520fashion%2520boutique%2520interior%2520with%2520wooden%2520shelves%2520and%2520racks%2520of%2520beige%2520and%2520neutral%2520colored%2520clothing%252C%2520soft%2520lighting%252C%2520minimalist%2520design%252C%2520warm%2520atmosphere%252C%2520high-end%2520retail%2520space%2520with%2520natural%2520materials&width=1920&height=1080&seq=1&orientation=landscape'); background-size: cover; background-position: center;">
+
+<div class="w-full max-w-md mx-auto p-6">
+    <div class="text-center mb-8">
+        <a href="login.html" class="font-['Pacifico'] text-4xl text-white no-underline hover:text-gray-200 transition-colors">try on</a>
+    </div>
+    <div class="form-container rounded-lg shadow-xl overflow-hidden p-8">
+
+        <div id="forgot-password-section">
+            <h2 class="text-2xl font-semibold mb-2 text-gray-800">Forgot Password?</h2>
+            <p class="text-sm text-gray-600 mb-6">Enter your email to verify your account.</p>
+            <form id="forgot-password-form">
+                <div class="mb-5">
+                    <label for="forgot-email" class="block text-sm font-medium mb-2 text-gray-700">Email Address</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <i class="ri-mail-line text-gray-400"></i>
+                        </div>
+                        <input type="email" id="forgot-email" name="email" class="form-input w-full pl-10 py-3 border border-gray-300 rounded-button focus:outline-none" placeholder="your@email.com" required>
+                        <i class="ri-check-circle-fill validation-icon validation-icon-check"></i>
+                        <i class="ri-error-warning-fill validation-icon validation-icon-error"></i>
+                        <small></small> </div>
+                </div>
+                <button type="submit" class="w-full bg-primary text-white py-3 rounded-button font-medium hover:bg-opacity-90 transition-all !rounded-button whitespace-nowrap">Verify Email</button>
+            </form>
+            <div id="forgot-message" class="message-area" role="alert"></div>
+            <div class="text-center mt-6">
+                <a href="login.html" id="show-login-link-from-forgot" class="text-sm text-primary hover:underline">
+                    <i class="ri-arrow-left-line align-middle"></i> Back to Login
+                </a>
+            </div>
+        </div>
+
+        <div id="reset-password-section" class="hidden">
+            <h2 class="text-2xl font-semibold mb-2 text-gray-800">Set New Password</h2>
+            <p class="text-sm text-gray-600 mb-6">Create a new password for your account.</p>
+            <form id="reset-password-form">
+                <div class="mb-5">
+                    <label for="reset-new-password" class="block text-sm font-medium mb-2 text-gray-700">New Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <i class="ri-lock-password-line text-gray-400"></i>
+                        </div>
+                        <input type="password" id="reset-new-password" name="newPassword" class="form-input w-full pl-10 py-3 border border-gray-300 rounded-button focus:outline-none" placeholder="••••••••" required>
+                        <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                            <button type="button" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 password-toggle-icon" data-target="reset-new-password">
+                                <i class="ri-eye-line"></i>
+                            </button>
+                        </div>
+                         <i class="ri-check-circle-fill validation-icon validation-icon-check"></i>
+                         <i class="ri-error-warning-fill validation-icon validation-icon-error"></i>
+                         <small></small> </div>
+                </div>
+                <div class="mb-5">
+                    <label for="reset-confirm-password" class="block text-sm font-medium mb-2 text-gray-700">Confirm New Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <i class="ri-lock-password-line text-gray-400"></i>
+                        </div>
+                        <input type="password" id="reset-confirm-password" name="confirmPassword" class="form-input w-full pl-10 py-3 border border-gray-300 rounded-button focus:outline-none" placeholder="••••••••" required>
+                         <div class="absolute inset-y-0 right-0 flex items-center pr-3">
+                            <button type="button" class="w-8 h-8 flex items-center justify-center text-gray-400 hover:text-gray-600 password-toggle-icon" data-target="reset-confirm-password">
+                                <i class="ri-eye-line"></i>
+                            </button>
+                        </div>
+                         <i class="ri-check-circle-fill validation-icon validation-icon-check"></i>
+                         <i class="ri-error-warning-fill validation-icon validation-icon-error"></i>
+                         <small></small> </div>
+                </div>
+                <button type="submit" class="w-full bg-primary text-white py-3 rounded-button font-medium hover:bg-opacity-90 transition-all !rounded-button whitespace-nowrap">Reset Password</button>
+            </form>
+             <div id="reset-message" class="message-area" role="alert"></div>
+            <div class="text-center mt-6">
+                <a href="login.html" id="cancel-reset-link" class="text-sm text-primary hover:underline">Cancel</a>
+            </div>
+        </div>
+
+        <div id="success-section" class="hidden text-center">
+             <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto mb-4">
+                 <i class="ri-check-line text-3xl text-green-600"></i>
+             </div>
+             <h2 class="text-2xl font-semibold mb-2 text-gray-800">Password Reset!</h2>
+             <p class="text-sm text-gray-600 mb-6">Your password has been successfully reset. Click below to log in.</p>
+             <a href="login.html" class="inline-block w-full bg-primary text-white py-3 rounded-button font-medium hover:bg-opacity-90 transition-all !rounded-button whitespace-nowrap">Continue to Login</a>
+         </div>
+
+    </div>
+</div>
+
+<script src="script.js" defer></script>
+</body>
+</html>
