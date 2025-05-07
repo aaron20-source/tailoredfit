@@ -50,7 +50,7 @@ const predefinedClothingItems = [
         }
     },
     {
-        id: 'item_tops_2', name: 'Black shirt with pockets', src: '.17th.png', category: 'Tops', gender: 'male', type: 'top',
+        id: 'item_tops_2', name: 'Black shirt with pockets', src: './17th.png', category: 'Tops', gender: 'male', type: 'top',
         tryOnImage: {
             female: null,
             male: "./ma/tma3.png",     // Default male
