@@ -40,120 +40,120 @@ const predefinedModels = {
 };
 
 const predefinedClothingItems = [
-    {
-        id: 'item_tops_1', name: 'Green short-sleeve shirt', src: 'C:/Users/Administrator/Desktop/try on 2/14th.png', category: 'Tops', gender: 'unisex', type: 'top',
+  {
+        id: 'item_tops_1', name: 'Green short-sleeve shirt', src: './14th.png', category: 'Tops', gender: 'unisex', type: 'top',
         tryOnImage: {
-            female: "C:/Users/Administrator/Desktop/try on 2/fa/female an/tfA2.png", // Default female
-            male: "C:/Users/Administrator/Desktop/try on 2/ma/male an/tma2.png",     // Default male
-            uploaded_female: "C:/Users/Administrator/Desktop/try on 2/female/for female/tf3.png", // *** REPLACE WITH YOUR PATH ***
-            uploaded_male: "C:/Users/Administrator/Desktop/try on 2/male/for male/tm3.png"      // *** REPLACE WITH YOUR PATH ***
+            female: "./fa/tfA2.png", // Default female
+            male: "./ma/tma2.png",     // Default male
+            uploaded_female: "./female/tf3.png", // *** REPLACE WITH YOUR PATH ***
+            uploaded_male: "./male/tm3.png"      // *** REPLACE WITH YOUR PATH ***
         }
     },
     {
-        id: 'item_tops_2', name: 'Black shirt with pockets', src: 'C:/Users/Administrator/Desktop/try on 2/17th.png', category: 'Tops', gender: 'male', type: 'top',
+        id: 'item_tops_2', name: 'Black shirt with pockets', src: '.17th.png', category: 'Tops', gender: 'male', type: 'top',
         tryOnImage: {
             female: null,
-            male: "C:/Users/Administrator/Desktop/try on 2/ma/male an/tma3.png",     // Default male
+            male: "./ma/tma3.png",     // Default male
             uploaded_female: null, // Not applicable or image not available
-            uploaded_male: "C:/Users/Administrator/Desktop/try on 2/male/for male/tm1.png" // *** REPLACE WITH YOUR PATH ***
+            uploaded_male: "./male/tm1.png" // *** REPLACE WITH YOUR PATH ***
         }
     },
     {
-        id: 'item_tops_3', name: 'White blouse with a bow', src: 'C:/Users/Administrator/Desktop/try on 2/12th.png', category: 'Tops', gender: 'female', type: 'top',
+        id: 'item_tops_3', name: 'White blouse with a bow', src: './12th.png', category: 'Tops', gender: 'female', type: 'top',
         tryOnImage: {
-            female: "C:/Users/Administrator/Desktop/try on 2/fa/female an/tfA4.png", // Default female
+            female: "./fa/tfA4.png", // Default female
             male: null,
-            uploaded_female: "C:/Users/Administrator/Desktop/try on 2/female/for female/tf1.png", // *** REPLACE WITH YOUR PATH ***
+            uploaded_female: "./female/tf1.png", // *** REPLACE WITH YOUR PATH ***
             uploaded_male: null
         }
     },
     {
-        id: 'item_outer_1', name: 'Denim Jacket', src: 'C:/Users/Administrator/Desktop/try on 2/21.png', category: 'Tops', gender: 'unisex', type: 'top',
+        id: 'item_outer_1', name: 'Denim Jacket', src: './21.png', category: 'Tops', gender: 'unisex', type: 'top',
         tryOnImage: {
-            female: "C:/Users/Administrator/Desktop/try on 2/fa/female an/tfA3.png", // Default female
-            male: "C:/Users/Administrator/Desktop/try on 2/ma/male an/tma4.png",     // Default male
-            uploaded_female: "C:/Users/Administrator/Desktop/try on 2/female/for female/tf4.png", // *** REPLACE WITH YOUR PATH ***
-            uploaded_male: "C:/Users/Administrator/Desktop/try on 2/male/for male/tm2.png"      // *** REPLACE WITH YOUR PATH ***
+            female: "./fa/tfA3.png", // Default female
+            male: "./ma/tma4.png",     // Default male
+            uploaded_female: "./female/tf4.png", // *** REPLACE WITH YOUR PATH ***
+            uploaded_male: "./male/tm2.png"      // *** REPLACE WITH YOUR PATH ***
         }
     },
     {
-        id: 'item_outer_2', name: 'Black short-sleeve shirt with white stitching', src: 'C:/Users/Administrator/Desktop/try on 2/5th.png', category: 'Tops', gender: 'male', type: 'top',
+        id: 'item_outer_2', name: 'Black short-sleeve shirt with white stitching', src: './5th.png', category: 'Tops', gender: 'male', type: 'top',
         tryOnImage: {
             female: null,
-            male: "C:/Users/Administrator/Desktop/try on 2/ma/male an/tma1.png",     // Default male
+            male: "./ma/tma1.png",     // Default male
             uploaded_female: null,
-            uploaded_male: "C:/Users/Administrator/Desktop/try on 2/male/for male/tm4.png" // *** REPLACE WITH YOUR PATH ***
+            uploaded_male: "./male/tm4.png" // *** REPLACE WITH YOUR PATH ***
         }
     },
     {
-        id: 'item_outer_3', name: 'Beige cropped sweater', src: 'C:/Users/Administrator/Desktop/try on 2/6th.png', category: 'Tops', gender: 'female', type: 'top',
+        id: 'item_outer_3', name: 'Beige cropped sweater', src: './6th.png', category: 'Tops', gender: 'female', type: 'top',
         tryOnImage: {
-            female: "C:/Users/Administrator/Desktop/try on 2/fa/female an/tfA1.png", // Default female
+            female: "./fa/tfA1.png", // Default female
             male: null,
-            uploaded_female: "C:/Users/Administrator/Desktop/try on 2/female/for female/tf2.png", // *** REPLACE WITH YOUR PATH ***
+            uploaded_female: "./female/tf2.png", // *** REPLACE WITH YOUR PATH ***
             uploaded_male: null
         }
     },
     {
-        id: 'item_dress_1', name: 'Black dress/Business casual', src: 'C:/Users/Administrator/Desktop/try on 2/22.png', category: 'One Piece', gender: 'female', type: 'other',
+        id: 'item_dress_1', name: 'Black dress/Business casual', src: './22.png', category: 'One Piece', gender: 'female', type: 'other',
         tryOnImage: {
-            female: "C:/Users/Administrator/Desktop/try on 2/fa/female an/opf4.png", // Default female
+            female: "./fa/opf4.png", // Default female
             male: null,
-            uploaded_female: "C:/Users/Administrator/Desktop/try on 2/female/for female/opf22.png", // *** REPLACE WITH YOUR PATH ***
+            uploaded_female: "./female/opf22.png", // *** REPLACE WITH YOUR PATH ***
             uploaded_male: null
         }
     },
     {
-        id: 'item_dress_2', name: 'Brown sleeveless dress', src: 'C:/Users/Administrator/Desktop/try on 2/9th.png', category: 'One Piece', gender: 'female', type: 'other',
+        id: 'item_dress_2', name: 'Brown sleeveless dress', src: './9th.png', category: 'One Piece', gender: 'female', type: 'other',
         tryOnImage: {
-            female: "C:/Users/Administrator/Desktop/try on 2/fa/female an/opf3.png", // Default female
+            female: "./fa/opf3.png", // Default female
             male: null,
-            uploaded_female: "C:/Users/Administrator/Desktop/try on 2/female/for female/opf11.png", // *** REPLACE WITH YOUR PATH ***
+            uploaded_female: "./female/opf11.png", // *** REPLACE WITH YOUR PATH ***
             uploaded_male: null
         }
     },
     {
-        id: 'item_dress_3', name: 'Red dress with pleats and gold buttons', src: 'C:/Users/Administrator/Desktop/try on 2/10th.png', category: 'One Piece', gender: 'female', type: 'other',
+        id: 'item_dress_3', name: 'Red dress with pleats and gold buttons', src: './10th.png', category: 'One Piece', gender: 'female', type: 'other',
         tryOnImage: {
-            female: "C:/Users/Administrator/Desktop/try on 2/fa/female an/opf1.png", // Default female
+            female: "./fa/opf1.png", // Default female
             male: null,
-            uploaded_female: "C:/Users/Administrator/Desktop/try on 2/female/for female/opf33.png", // *** REPLACE WITH YOUR PATH ***
+            uploaded_female: "./female/opf33.png", // *** REPLACE WITH YOUR PATH ***
             uploaded_male: null
         }
     },
     {
-        id: 'item_bottoms_1', name: 'Dark blue jeans', src: 'C:/Users/Administrator/Desktop/try on 2/2nd.png', category: 'Bottoms', gender: 'unisex', type: 'bottom',
+        id: 'item_bottoms_1', name: 'Dark blue jeans', src: './2nd.png', category: 'Bottoms', gender: 'unisex', type: 'bottom',
         tryOnImage: {
-            female: "C:/Users/Administrator/Desktop/try on 2/fa/female an/bfa1.png", // Default female
-            male: "C:/Users/Administrator/Desktop/try on 2/ma/male an/bma1.png",     // Default male
-            uploaded_female: "C:/Users/Administrator/Desktop/try on 2/female/for female/bf1.png", // *** REPLACE WITH YOUR PATH ***
-            uploaded_male: "C:/Users/Administrator/Desktop/try on 2/male/for male/bm1.png"      // *** REPLACE WITH YOUR PATH ***
+            female: "./fa/bfa1.png", // Default female
+            male: "./ma/bma1.png",     // Default male
+            uploaded_female: "./female/bf1.png", // *** REPLACE WITH YOUR PATH ***
+            uploaded_male: "./male/bm1.png"      // *** REPLACE WITH YOUR PATH ***
         }
     },
     {
-        id: 'item_bottoms_2', name: 'Black wide-leg pants', src: 'C:/Users/Administrator/Desktop/try on 2/20.png', category: 'Bottoms', gender: 'male', type: 'bottom',
+        id: 'item_bottoms_2', name: 'Black wide-leg pants', src: './20.png', category: 'Bottoms', gender: 'male', type: 'bottom',
         tryOnImage: {
             female: null,
-            male: "C:/Users/Administrator/Desktop/try on 2/ma/male an/bma2.png",     // Default male
+            male: "./ma/bma2.png",     // Default male
             uploaded_female: null,
-            uploaded_male: "C:/Users/Administrator/Desktop/try on 2/male/for male/bm2.png" // *** REPLACE WITH YOUR PATH ***
+            uploaded_male: "./male/bm2.png" // *** REPLACE WITH YOUR PATH ***
         }
     },
     {
-        id: 'item_bottoms_3', name: 'Marni low-rise Flared Trousers', src: 'C:/Users/Administrator/Desktop/try on 2/23.png', category: 'Bottoms', gender: 'female', type: 'bottom',
+        id: 'item_bottoms_3', name: 'Marni low-rise Flared Trousers', src: './23.png', category: 'Bottoms', gender: 'female', type: 'bottom',
          tryOnImage: {
-            female: "C:/Users/Administrator/Desktop/try on 2/fa/female an/bfa2.png", // Default female
+            female: "./fa/bfa2.png", // Default female
             male: null,
-            uploaded_female: "C:/Users/Administrator/Desktop/try on 2/female/for female/bf2.png", // *** REPLACE WITH YOUR PATH ***
+            uploaded_female: "./female/bf2.png", // *** REPLACE WITH YOUR PATH ***
             uploaded_male: null
         }
     },
     {
-        id: 'item_skirt_1', name: 'Red pleated skirt', src: 'C:/Users/Administrator/Desktop/try on 2/7th.png', category: 'One Piece', gender: 'female', type: 'other',
+        id: 'item_skirt_1', name: 'Red pleated skirt', src: './7th.png', category: 'One Piece', gender: 'female', type: 'other',
         tryOnImage: {
-            female: "C:/Users/Administrator/Desktop/try on 2/fa/female an/opf2.png", // Default female
+            female: "./fa/opf2.png", // Default female
             male: null,
-            uploaded_female: "C:/Users/Administrator/Desktop/try on 2/female/for female/opf44.png", // *** REPLACE WITH YOUR PATH ***
+            uploaded_female: "./female/opf44.png", // *** REPLACE WITH YOUR PATH ***
             uploaded_male: null
         }
     },
